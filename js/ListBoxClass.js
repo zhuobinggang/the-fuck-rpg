@@ -15,12 +15,16 @@ class ListBox {
         var max = this.maxDisplayLength;
         var start = this.displayListStart;
         var end = start + max;
+
         //fix pointer
-        if (this.thePointer < 0) {
+        if(this.list.length == 0){
+            this.thePointer = 0;
+        } else if (this.thePointer < 0) {
             this.thePointer = 0;
         } else if (this.thePointer >= this.list.length) {
             this.thePointer = this.list.length - 1;
         }
+
         //fix display list
         if (this.thePointer < start) {
             this.displayListStart = this.thePointer;

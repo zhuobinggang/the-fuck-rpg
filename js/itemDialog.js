@@ -6,10 +6,17 @@ var itemDialog = new ListBox(5);
 itemDialog.group = null;
 itemDialog.init = function () {
     itemDialog.group = game.add.group();
-    itemDialog.list.push(Items.stick,Items.egg);
+    // itemDialog.list.push(Items.stick,Items.egg);
+    //从用户背包初始化
+    itemDialog.list = player.itemList;
     itemDialog.displayList = itemDialog.list.slice(itemDialog.thePointer,itemDialog.maxDisplayLength);
 }
 itemDialog.reOpen = function () {
+    //重新更新显示位置
+    itemDialog.thePointer = 0;
+    itemDialog.displayListStart = 0;
+    itemDialog.displayList = itemDialog.list.slice(itemDialog.thePointer,itemDialog.maxDisplayLength);
+
     currentCustomState = itemDialog;
     menuDialog.setVisible(false);
     itemDialog.setVisible(true);
@@ -57,7 +64,9 @@ itemDialog.goUp = function () {
 }
 itemDialog.aDown = function () {
     // console.info('seleted item is:'+itemDialog.getSelectedItem().name);
-    itemShowDialog.reSetItem(itemDialog.getSelectedItem());
+    var selected = itemDialog.getSelectedItem();
+    if(! selected)return;
+    itemShowDialog.reSetItem(selected);
     itemShowDialog.reOpen();
 }
 itemDialog.bDown = function () {
@@ -150,7 +159,12 @@ itemShowDialog.goUp = function () {
     itemShowDialog.render();
 }
 itemShowDialog.aDown = function () {
-    itemShowDialog.getSelectedItem().confirm(itemShowDialog.currentItem,player,player);
+    var selected = itemShowDialog.getSelectedItem();
+    if(! selected)return;
+    selected.confirm(itemShowDialog.currentItem,player,player);
+
+    currentCustomState = mainState;
+    itemShowDialog.setVisible(false);
 }
 itemShowDialog.bDown = function () {
     itemShowDialog.close();
