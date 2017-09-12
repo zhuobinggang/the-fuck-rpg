@@ -8,7 +8,7 @@ menuDialog.init = function () {
     menuDialog.textGroup = game.add.group();
     menuDialog.textGroup.visible = false;
 
-    menuDialog.list.push({name: '角色',aDown:function () {}});
+    menuDialog.list.push(roleDialog.getMenuItem());
     menuDialog.list.push(itemDialog.getMenuItem());
 
     menuDialog.thePointer = 0;

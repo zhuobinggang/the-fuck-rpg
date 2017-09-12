@@ -36,6 +36,7 @@ var mainState = {//the main dialog & the game
 
         //init dialogs
         itemDialog.init();
+        roleDialog.init();
         menuDialog.init();
         itemShowDialog.init();
     },
