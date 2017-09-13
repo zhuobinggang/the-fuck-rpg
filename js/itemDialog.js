@@ -90,12 +90,14 @@ itemShowDialog.rightFont = {font: "bold 22px Arial", fill: "#fff", boundsAlignH:
 
 itemShowDialog.init = function () {
     itemShowDialog.group = game.add.group();
-    itemShowDialog.list = itemShowDialog.currentItem.opers.slice();
+    // itemShowDialog.list = itemShowDialog.currentItem.opers.slice();
+    itemShowDialog.list = [operItems.use,operItems.wear,operItems.discard];
     itemShowDialog.displayList = itemShowDialog.list.slice(itemShowDialog.thePointer,itemShowDialog.maxDisplayLength);
 }
 itemShowDialog.reSetItem = function (item) {
     itemShowDialog.currentItem = item || Items.excalibur;
-    itemShowDialog.list = itemShowDialog.currentItem.opers.slice();
+    // itemShowDialog.list = itemShowDialog.currentItem.opers.slice();
+    itemShowDialog.list = [operItems.use,operItems.wear,operItems.discard];
     itemShowDialog.thePointer = 0;
     itemShowDialog.displayListStart = 0;
     itemShowDialog.displayList = itemShowDialog.list.slice(itemShowDialog.thePointer,itemShowDialog.maxDisplayLength);

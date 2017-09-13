@@ -89,11 +89,10 @@ roleDialog.goUp = function () {
     roleDialog.render();
 }
 roleDialog.aDown = function () {
-    // console.info('seleted item is:'+roleDialog.getSelectedItem().name);
-    // var selected = roleDialog.getSelectedItem();
-    // if (!selected)return;
-    // itemShowDialog.reSetItem(selected);
-    // itemShowDialog.reOpen();
+    console.info('seleted item is:'+roleDialog.getSelectedItem().name);
+    var selected = roleDialog.getSelectedItem();
+    if (!selected)return;
+    equipShowDialog.reOpen(selected);
 }
 roleDialog.bDown = function () {
     roleDialog.close();
@@ -103,4 +102,111 @@ roleDialog.getMenuItem = function () {
         name: '角色',
         aDown: roleDialog.reOpen,
     }
+}
+
+/**9.13 装备展示页面**/
+
+var equipShowDialog = new ListBox(5);
+equipShowDialog.group = null;
+equipShowDialog.currentItem = null;
+
+equipShowDialog.init = function () {
+    equipShowDialog.group = game.add.group();
+    // equipShowDialog.list.push(Items.stick,Items.egg);
+    //从用户背包初始化
+    equipShowDialog.list = player.equipmentList;
+    equipShowDialog.displayList = equipShowDialog.list.slice(equipShowDialog.thePointer, equipShowDialog.maxDisplayLength);
+}
+equipShowDialog.reOpen = function (item) {
+    equipShowDialog.currentItem = item || Items.excalibur;
+
+    //重新更新显示位置
+    equipShowDialog.thePointer = 0;
+    equipShowDialog.displayListStart = 0;
+    equipShowDialog.list = [operItems.takeApart];
+    equipShowDialog.displayList = equipShowDialog.list.slice(equipShowDialog.thePointer, equipShowDialog.maxDisplayLength);
+
+    //state change
+    currentCustomState = equipShowDialog;
+    roleDialog.setVisible(false);
+    equipShowDialog.setVisible(true);
+    equipShowDialog.render();
+}
+equipShowDialog.render = function () {
+    var item = equipShowDialog.currentItem;
+
+    var style = menuDialog.font;
+    equipShowDialog.group.removeAll();
+
+    function showUICorrect(ui) {
+        ui.fixedToCamera = true;
+        equipShowDialog.group.add(ui);
+    }
+
+    (function renderPlayerStatus() {
+        var padding = 50;
+        var text = game.add.text(0, 0, '生命提升\t' + item.maxHealth, style);
+        text.setTextBounds(0, 0 * padding, 250, padding);
+        showUICorrect(text);
+        text = game.add.text(0, 0, '力量值\t' + item.pysicPower, style);
+        text.setTextBounds(0, 1 * padding, 250, padding);
+        showUICorrect(text);
+        text = game.add.text(0, 0, '魔力值\t' + item.magicPower, style);
+        text.setTextBounds(0, 2 * padding, 250, padding);
+        showUICorrect(text);
+        text = game.add.text(0, 0, '物防\t' + item.pysicDefense, style);
+        text.setTextBounds(0, 3 * padding, 250, padding);
+        showUICorrect(text);
+        text = game.add.text(0, 0, '魔防\t' + item.magicDefense, style);
+        text.setTextBounds(0, 4 * padding, 250, padding);
+        showUICorrect(text);
+    })();
+
+    (function updateEquipments() {
+        var list = equipShowDialog.displayList;
+        for (var i = list.length - 1; i >= 0; i--) {
+            var text = game.add.text(0, 0, list[i].name, style);
+            text.setTextBounds(250, i * 100, 250, 100);
+            showUICorrect(text);
+        }
+    })();
+
+    var barY = (equipShowDialog.thePointer - equipShowDialog.displayListStart) * 100;
+    var bar = game.add.graphics();
+    bar.beginFill(0x000000, 0.2);
+    bar.drawRect(250, barY, 250, 100);
+    showUICorrect(bar);
+}
+equipShowDialog.setVisible = function (visible) {
+    equipShowDialog.group.visible = visible;
+}
+equipShowDialog.close = function () {
+    //change current custom state
+    currentCustomState = roleDialog;
+    equipShowDialog.setVisible(false);
+    roleDialog.setVisible(true);
+}
+equipShowDialog.goDown = function () {
+    equipShowDialog.thePointer++;
+    equipShowDialog.displayListUpdate();
+    equipShowDialog.render();
+}
+equipShowDialog.goUp = function () {
+    equipShowDialog.thePointer--;
+    equipShowDialog.displayListUpdate();
+    equipShowDialog.render();
+}
+equipShowDialog.aDown = function () {
+    console.info('seleted item is:'+equipShowDialog.getSelectedItem().name);
+    var selected = equipShowDialog.getSelectedItem();
+    if (!selected)return;
+    selected.confirm(equipShowDialog.currentItem,player,player);
+
+    //重新渲染role菜单
+    currentCustomState = roleDialog;
+    equipShowDialog.setVisible(false);
+    roleDialog.reOpen();
+}
+equipShowDialog.bDown = function () {
+    equipShowDialog.close();
 }

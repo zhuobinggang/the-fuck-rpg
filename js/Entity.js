@@ -38,7 +38,7 @@ function playerInteractiveInit() {
     }
     player.effectFrom = function (item, src) {
         //使用后删除
-        if(src){
+        if (src) {
             var index = src.itemList.indexOf(item);
             if (index >= 0) src.itemList.splice(index, 1);
         }
@@ -87,9 +87,23 @@ function playerInteractiveInit() {
         player.magicDefense += magicDefense;
     }
     player.getItem = function (item, src) {
-        src = src || {name:"你爸爸"}
-        console.info('从 '+src.name+' 那获得道具 '+item.name);
+        src = src || {name: "你爸爸"}
+        console.info('从 ' + src.name + ' 那获得道具 ' + item.name);
         player.itemList.push(item);
+    }
+    player.subProperty = function (mh, pp, mp, pd, md) {
+        player.maxHealth -= mh || 0;
+        player.pysicPower -= pp || 0;
+        player.magicPower -= mp || 0;
+        player.pysicDefense -= pd || 0;
+        player.magicDefense -= md || 0;
+    }
+    player.subEquipProperty = function (item) {
+        if (!item)return;
+        player.subProperty(
+            item.maxHealth, item.pysicPower, item.magicPower,
+            item.pysicDefense, item.magicDefense
+        );
     }
     player.discardEquipment = function (equipment, src) {
         var index = player.equipmentList.indexOf(equipment);
@@ -97,14 +111,18 @@ function playerInteractiveInit() {
             console.warn("没有这件武器");
             return;
         }
-        player.equipmentList.splice(index, 1);
+
+        //减去属性
+        player.subEquipProperty(equipment);
+
         //扔回道具栏
+        player.equipmentList.splice(index, 1);
         player.itemList.push(equipment);
     }
     player.discardItem = function (item, src) {
         var index = player.itemList.indexOf(item);
         if (index >= 0) player.itemList.splice(index, 1);
-        else{
+        else {
             console.warn("没有这件道具");
             return;
         }

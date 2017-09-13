@@ -15,7 +15,22 @@ var operItems = {
             target.wearEquipment(item, src);
         }
     },
-    discard: {name: '丢弃'},
+    discard: {
+        name: '丢弃',
+        confirm: function (item, src, target) {
+            console.info(target.name+"被丢弃了道具:"+item.name);
+            target.discardItem(item,src);
+        }
+    },
+    takeApart: {
+        name: '卸下装备',
+        confirm: function (item, src, target) {
+            console.info(target.name+"被拆掉了装备:"+item.name);
+            target.discardEquipment(item,src);
+        }
+    },
+    sale: {name: '卖出'},
+    buy: {name: '买入'},
 }
 
 /**Items define**/

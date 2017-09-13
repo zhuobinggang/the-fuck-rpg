@@ -39,6 +39,7 @@ var mainState = {//the main dialog & the game
         roleDialog.init();
         menuDialog.init();
         itemShowDialog.init();
+        equipShowDialog.init();
     },
     render: function () {
 
