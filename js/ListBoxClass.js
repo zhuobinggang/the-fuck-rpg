@@ -1,4 +1,30 @@
 /**
+ * 2017/9/13
+ * 自定义状态原型类
+ */
+var CustomState = function (name) {
+    this.name = name || '没有名字的自定义状态';
+}
+CustomState.prototype.goUp = function () {
+    console.info(this.name + '想要往上走');
+}
+CustomState.prototype.goDown = function () {
+    console.info(this.name + '想要往下走');
+}
+CustomState.prototype.goLeft = function () {
+    console.info(this.name + '想要往左走');
+}
+CustomState.prototype.goRight = function () {
+    console.info(this.name + '想要往右走');
+}
+CustomState.prototype.aDown = function () {
+    console.info(this.name + '点了A键');
+}
+CustomState.prototype.bDown = function () {
+    console.info(this.name + '点了B键');
+}
+
+/**
  * Created by zhuo on 2017/9/4.
  */
 class ListBox {
@@ -17,7 +43,7 @@ class ListBox {
         var end = start + max;
 
         //fix pointer
-        if(this.list.length == 0){
+        if (this.list.length == 0) {
             this.thePointer = 0;
         } else if (this.thePointer < 0) {
             this.thePointer = 0;
@@ -37,7 +63,7 @@ class ListBox {
         this.displayList = this.list.slice(newStart, newStart + max);
     }
 
-    init(){
+    init() {
 
     }
 
@@ -63,8 +89,51 @@ class ListBox {
     bDown() {
     };
 
-    getSelectedItem(){
+    getSelectedItem() {
         var selected = this.list[this.thePointer - this.displayListStart];
         return selected;
     };
 }
+;
+
+/**9.13 消息弹窗类**/
+var myAlertDialog = new CustomState('消息弹窗');
+myAlertDialog.group = null;
+myAlertDialog.init = function () {
+    myAlertDialog.group = game.add.group();
+    myAlertDialog.group.visible = false;
+}
+myAlertDialog.reOpen = function (msg, cb) {
+    currentCustomState = myAlertDialog;
+    myAlertDialog.msg = msg || '没有信息';
+    myAlertDialog.cb = cb || function () {
+            console.warn('没有提供信息给弹窗');
+        };
+    myAlertDialog.render();
+}
+myAlertDialog.render = function () {
+    myAlertDialog.group.removeAll(true);
+    myAlertDialog.group.visible = true;
+
+    function showUICorrect(ui) {
+        ui.fixedToCamera = true;
+        myAlertDialog.group.add(ui);
+    }
+
+    var bg = game.add.graphics();
+    bg.beginFill(0x000000);
+    bg.drawRect(0,0,500,500);
+    showUICorrect(bg);
+
+    var text = game.add.text(0,0,myAlertDialog.msg,{font: "bold 32px Arial", fill: "#4EEE94", boundsAlignH: "center", boundsAlignV: "middle"});
+    text.setTextBounds(100,100,300,300);
+    showUICorrect(text);
+}
+myAlertDialog.aDown = function () {
+    myAlertDialog.group.visible = false;
+    myAlertDialog.cb();
+}
+myAlertDialog.bDown = function () {
+    myAlertDialog.group.visible = false;
+    currentCustomState = mainState;
+};

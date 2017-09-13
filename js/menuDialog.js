@@ -21,7 +21,7 @@ menuDialog.init = function () {
 menuDialog.render = function () {
     var style = menuDialog.font;
 
-    menuDialog.textGroup.removeAll();
+    menuDialog.textGroup.removeAll(true);
     (function updateTexts() {
         var list = menuDialog.displayList;
         for (var i = list.length - 1; i >= 0; i--) {
@@ -34,7 +34,7 @@ menuDialog.render = function () {
 
     var barY = (menuDialog.thePointer - menuDialog.displayListStart) * 100;
     var bar = game.add.graphics();
-    bar.beginFill(0x000000, 0.2);
+    bar.beginFill(0xEE0000, 0.2);
     bar.drawRect(0, barY, 500, 100);
     bar.fixedToCamera = true;
     menuDialog.textGroup.add(bar);

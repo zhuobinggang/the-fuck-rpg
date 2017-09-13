@@ -9,13 +9,13 @@ itemDialog.init = function () {
     // itemDialog.list.push(Items.stick,Items.egg);
     //从用户背包初始化
     itemDialog.list = player.itemList;
-    itemDialog.displayList = itemDialog.list.slice(itemDialog.thePointer,itemDialog.maxDisplayLength);
+    itemDialog.displayList = itemDialog.list.slice(itemDialog.thePointer, itemDialog.maxDisplayLength);
 }
 itemDialog.reOpen = function () {
     //重新更新显示位置
     itemDialog.thePointer = 0;
     itemDialog.displayListStart = 0;
-    itemDialog.displayList = itemDialog.list.slice(itemDialog.thePointer,itemDialog.maxDisplayLength);
+    itemDialog.displayList = itemDialog.list.slice(itemDialog.thePointer, itemDialog.maxDisplayLength);
 
     currentCustomState = itemDialog;
     menuDialog.setVisible(false);
@@ -25,7 +25,7 @@ itemDialog.reOpen = function () {
 itemDialog.render = function () {
     var style = menuDialog.font;
 
-    itemDialog.group.removeAll();
+    itemDialog.group.removeAll(true);
     (function updateTexts() {
         var list = itemDialog.displayList;
         for (var i = list.length - 1; i >= 0; i--) {
@@ -53,19 +53,19 @@ itemDialog.close = function () {
     menuDialog.setVisible(true);
 }
 itemDialog.goDown = function () {
-    itemDialog.thePointer ++;
+    itemDialog.thePointer++;
     itemDialog.displayListUpdate();
     itemDialog.render();
 }
 itemDialog.goUp = function () {
-    itemDialog.thePointer --;
+    itemDialog.thePointer--;
     itemDialog.displayListUpdate();
     itemDialog.render();
 }
 itemDialog.aDown = function () {
     // console.info('seleted item is:'+itemDialog.getSelectedItem().name);
     var selected = itemDialog.getSelectedItem();
-    if(! selected)return;
+    if (!selected)return;
     itemShowDialog.reSetItem(selected);
     itemShowDialog.reOpen();
 }
@@ -91,16 +91,16 @@ itemShowDialog.rightFont = {font: "bold 22px Arial", fill: "#fff", boundsAlignH:
 itemShowDialog.init = function () {
     itemShowDialog.group = game.add.group();
     // itemShowDialog.list = itemShowDialog.currentItem.opers.slice();
-    itemShowDialog.list = [operItems.use,operItems.wear,operItems.discard];
-    itemShowDialog.displayList = itemShowDialog.list.slice(itemShowDialog.thePointer,itemShowDialog.maxDisplayLength);
+    itemShowDialog.list = [operItems.use, operItems.wear, operItems.discard];
+    itemShowDialog.displayList = itemShowDialog.list.slice(itemShowDialog.thePointer, itemShowDialog.maxDisplayLength);
 }
 itemShowDialog.reSetItem = function (item) {
     itemShowDialog.currentItem = item || Items.excalibur;
     // itemShowDialog.list = itemShowDialog.currentItem.opers.slice();
-    itemShowDialog.list = [operItems.use,operItems.wear,operItems.discard];
+    itemShowDialog.list = [operItems.use, operItems.wear, operItems.discard];
     itemShowDialog.thePointer = 0;
     itemShowDialog.displayListStart = 0;
-    itemShowDialog.displayList = itemShowDialog.list.slice(itemShowDialog.thePointer,itemShowDialog.maxDisplayLength);
+    itemShowDialog.displayList = itemShowDialog.list.slice(itemShowDialog.thePointer, itemShowDialog.maxDisplayLength);
 }
 itemShowDialog.reOpen = function (item) {
     currentCustomState = itemShowDialog;
@@ -109,7 +109,7 @@ itemShowDialog.reOpen = function (item) {
     itemShowDialog.render();
 }
 itemShowDialog.render = function () {
-    itemShowDialog.group.removeAll();
+    itemShowDialog.group.removeAll(true);
 
     var leftStyle = itemShowDialog.descFont;
     var rightStyle = itemShowDialog.rightFont;
@@ -118,8 +118,8 @@ itemShowDialog.render = function () {
     // game.add.graphics().beginFill(0x000000,1).drawRect(0,0,500,500);
 
     //左边描述栏
-    var desc = game.add.text(0,0,itemShowDialog.currentItem.desc,leftStyle);
-    desc.setTextBounds(0,0,250,250);
+    var desc = game.add.text(0, 0, itemShowDialog.currentItem.desc, leftStyle);
+    desc.setTextBounds(0, 0, 250, 250);
     desc.fixedToCamera = true;
     itemShowDialog.group.add(desc);
 
@@ -151,22 +151,23 @@ itemShowDialog.close = function () {
     itemDialog.setVisible(true);
 }
 itemShowDialog.goDown = function () {
-    itemShowDialog.thePointer ++;
+    itemShowDialog.thePointer++;
     itemShowDialog.displayListUpdate();
     itemShowDialog.render();
 }
 itemShowDialog.goUp = function () {
-    itemShowDialog.thePointer --;
+    itemShowDialog.thePointer--;
     itemShowDialog.displayListUpdate();
     itemShowDialog.render();
 }
 itemShowDialog.aDown = function () {
     var selected = itemShowDialog.getSelectedItem();
-    if(! selected)return;
-    selected.confirm(itemShowDialog.currentItem,player,player);
-
-    currentCustomState = mainState;
+    if (!selected)return;
     itemShowDialog.setVisible(false);
+    myAlertDialog.reOpen('确认?',function cb() {
+        selected.confirm(itemShowDialog.currentItem, player, player);
+        currentCustomState = mainState;
+    })
 }
 itemShowDialog.bDown = function () {
     itemShowDialog.close();

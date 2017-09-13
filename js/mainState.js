@@ -38,6 +38,7 @@ var mainState = {//the main dialog & the game
         itemDialog.init();
         roleDialog.init();
         menuDialog.init();
+        myAlertDialog.init();
         itemShowDialog.init();
         equipShowDialog.init();
     },

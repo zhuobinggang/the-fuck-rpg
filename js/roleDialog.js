@@ -25,7 +25,7 @@ roleDialog.reOpen = function () {
 }
 roleDialog.render = function () {
     var style = menuDialog.font;
-    roleDialog.group.removeAll();
+    roleDialog.group.removeAll(true);
 
     function showUICorrect(ui) {
         ui.fixedToCamera = true;
@@ -136,7 +136,7 @@ equipShowDialog.render = function () {
     var item = equipShowDialog.currentItem;
 
     var style = menuDialog.font;
-    equipShowDialog.group.removeAll();
+    equipShowDialog.group.removeAll(true);
 
     function showUICorrect(ui) {
         ui.fixedToCamera = true;
