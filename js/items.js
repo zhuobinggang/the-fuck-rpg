@@ -31,6 +31,9 @@ var operItems = {
     },
     sale: {name: '卖出'},
     buy: {name: '买入'},
+    checkEnemies: {name:'观察敌人'},
+    skill: {name:'技能'},
+    escape: {name:'逃跑'},
 }
 
 /**Items define**/

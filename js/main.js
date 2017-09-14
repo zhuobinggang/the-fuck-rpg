@@ -5,6 +5,7 @@ var game;
 var map;
 var layer_glass;//the ground
 var layer_lava;//the river,lava,stone
+var currentMap;
 var layer_bridge;
 var layer_lives;
 var layer_objs;

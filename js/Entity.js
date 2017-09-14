@@ -17,37 +17,37 @@ class Entity {
     }
 }
 
-function playerInteractiveInit() {
-    //meta data
-    player.health = 100;
-    player.maxHealth = 100;
-    player.pysicPower = 1;
-    player.magicPower = 1;
-    player.pysicDefense = 0;
-    player.magicDefense = 0;
-
-    player.itemList = [Items.egg, Items.excalibur, Items.stick];
-    player.equipmentList = [];
-    player.equipmentMaxNum = 5;//最多五件装备
-
-    player.healthChange = function (damage) {
-        damage = damage || 0;
-        player.health -= damage;
-        console.info('player health changed! ' + player.health);
-        //TODO: 渲染生命值
+class LiveObject extends Entity{
+    constructor(name,mh,pp,mp,pd,md,speed){
+        super(name);
+        this.maxHealth = mh || 9999999;
+        this.health = this.maxHealth;
+        this.pysicPower = pp || 0;
+        this.magicPower = mp || 0;
+        this.pysicDefense = pd || 0;
+        this.magicDefense = md || 0;
+        this.speed = speed || 0;
     }
-    player.effectFrom = function (item, src) {
-        //使用后删除
-        if (src) {
-            var index = src.itemList.indexOf(item);
-            if (index >= 0) src.itemList.splice(index, 1);
-        }
 
-        //计算魔法和物理伤害
-        var pysicDamage = item.pysicDamage || 0;
-        var magicDamage = item.magicDamage || 0;
+    subProperty(mh, pp, mp, pd, md) {
+        this.maxHealth -= mh || 0;
+        this.pysicPower -= pp || 0;
+        this.magicPower -= mp || 0;
+        this.pysicDefense -= pd || 0;
+        this.magicDefense -= md || 0;
+    }
+
+    healthChange(damage) {
+        damage = damage || 0;
+        this.health -= damage;
+        console.info('Life health changed! ' + this.health);
+    }
+
+    damageFrom(pysicDamage,magicDamage){
+        pysicDamage = pysicDamage || 0;
+        magicDamage = magicDamage || 0;
         if (pysicDamage > 0) {//如果是伤害道具
-            pysicDamage -= player.pysicDefense;
+            pysicDamage -= this.pysicDefense;
             pysicDamage = (pysicDamage < 0) ? 0 : pysicDamage;
         }
         if (magicDamage > 0) {//如果是伤害道具
@@ -55,7 +55,23 @@ function playerInteractiveInit() {
             magicDamage = (magicDamage < 0) ? 0 : magicDamage;
         }
 
-        player.healthChange(pysicDamage + magicDamage);
+        this.healthChange(pysicDamage+magicDamage);
+    }
+}
+
+function playerInteractiveInit() {
+    player.itemList = [Items.egg, Items.excalibur, Items.stick];
+    player.equipmentList = [];
+    player.equipmentMaxNum = 5;//最多五件装备
+
+    player.effectFrom = function (item, src) {
+        //使用后删除
+        if (src) {
+            var index = src.itemList.indexOf(item);
+            if (index >= 0) src.itemList.splice(index, 1);
+        }
+
+        player.damageFrom(item.pysicDamage,item.magicDamage);
     }
     player.wearEquipment = function (item, src) {
         //检查装备容量
@@ -91,12 +107,9 @@ function playerInteractiveInit() {
         console.info('从 ' + src.name + ' 那获得道具 ' + item.name);
         player.itemList.push(item);
     }
-    player.subProperty = function (mh, pp, mp, pd, md) {
-        player.maxHealth -= mh || 0;
-        player.pysicPower -= pp || 0;
-        player.magicPower -= mp || 0;
-        player.pysicDefense -= pd || 0;
-        player.magicDefense -= md || 0;
+    player.healthChange = function (damage) {
+        LiveObject.prototype.healthChange.call(this,damage);
+        console.info('扩展了父类方法');
     }
     player.subEquipProperty = function (item) {
         if (!item)return;

@@ -13,31 +13,35 @@ var mainState = {//the main dialog & the game
     create: function () {
         console.log('call::create()');
 
+        //init a map:plain1
         // load up tilemap
-        map = game.add.tilemap('tile_map');
+        // map = game.add.tilemap('tile_map');
+        //
+        // // link loaded tileset image to map
+        // map.addTilesetImage('west_rpg', 'tiles1');
+        // map.addTilesetImage('the_man_set', 'tiles2');
+        //
+        // // create laye for said tileset and map now!
+        // layer_glass = map.createLayer('glass');
+        // layer_lava = map.createLayer('lava');
+        // layer_bridge = map.createLayer('bridge');
+        // layer_lives = map.createLayer('lives');
+        // layer_objs = map.createLayer('objs');
+        //
 
-        // link loaded tileset image to map
-        map.addTilesetImage('west_rpg', 'tiles1');
-        map.addTilesetImage('the_man_set', 'tiles2');
-
-        // create laye for said tileset and map now!
-        layer_glass = map.createLayer('glass');
-        layer_lava = map.createLayer('lava');
-        layer_bridge = map.createLayer('bridge');
-        layer_lives = map.createLayer('lives');
-        layer_objs = map.createLayer('objs');
-
+        Maps.plain1.reOpen();
+        map.resizeWorld();
         mainState.initPlayer();
-        mainState.initObjsTileMap();
+        // mainState.initObjsTileMap();
         // layer2.debug = true;
 
-        layer_glass.resizeWorld();
         cursor = game.input.keyboard.createCursorKeys();
 
         //init dialogs
         itemDialog.init();
         roleDialog.init();
         menuDialog.init();
+        fightState.init();
         myAlertDialog.init();
         itemShowDialog.init();
         equipShowDialog.init();
@@ -52,9 +56,15 @@ var mainState = {//the main dialog & the game
 
     },
     initPlayer: function () {
-        // player = game.add.sprite(game.camera.width / 2, game.camera.height / 2, 'player_left');
-        player = new Entity('管理员');
-        player.tile = map.getTile(2, 0, layer_lives);
+        player = new LiveObject('管理员', 100, 1, 1, 0, 0, 10);
+
+        //玩家用户事件初始化
+        player.events = {}
+        player.events.moveEvent = new Phaser.Signal();
+        player.events.moveEvent.add(FightSystem.onPlayerMove);
+
+        // player.tile = map.getTile(2, 0, layer_lives);
+        player.tile = map.getPlayerTile();
         player.facing = 3;//0 1 2 3 up down left right
 
         player.fixCamera = function () {
@@ -63,20 +73,27 @@ var mainState = {//the main dialog & the game
 
         //控制初始化
         player.goTo = function (offsetX, offsetY) {
-            var nextX = player.tile.x + offsetX;
-            if (nextX < 0 || nextX >= map.width)return;
+            //player go to
+            if (map.playerGoTo(offsetX,offsetY)) {
+                //signal
+                player.events.moveEvent.dispatch('fuck');
+                player.fixCamera();
+            }
 
-            var nextY = player.tile.y + offsetY;
-            if (nextY < 0 || nextY >= map.height)return;
+            // var nextX = player.tile.x + offsetX;
+            // if (nextX < 0 || nextX >= map.width)return;
+            //
+            // var nextY = player.tile.y + offsetY;
+            // if (nextY < 0 || nextY >= map.height)return;
+            //
+            // if (!noStone(nextX, nextY))return;
+            //
+            // //move
+            // var tile = map.putTile(player.tile, nextX, nextY, layer_lives);
+            // map.putTile(null, player.tile.x, player.tile.y, layer_lives);//remove
+            // player.tile = tile;
 
-            if (!noStone(nextX, nextY))return;
 
-            //move
-            var tile = map.putTile(player.tile, nextX, nextY, layer_lives);
-            map.putTile(null, player.tile.x, player.tile.y, layer_lives);//remove
-            player.tile = tile;
-
-            player.fixCamera();
         }
 
         player.aDown = function () {
@@ -114,6 +131,9 @@ var mainState = {//the main dialog & the game
 
         //道具使用初始化
         playerInteractiveInit();
+
+        //目标对象
+        player.target = player;//初始目标对象是自己
     },
     goLeft: function () {
         player.goLeft();
@@ -158,6 +178,6 @@ var mainState = {//the main dialog & the game
 
 }
 //加载存档
-loadArchives= function () {
+loadArchives = function () {
 
 }
