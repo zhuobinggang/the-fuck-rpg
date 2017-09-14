@@ -8,26 +8,12 @@ var mainState = {//the main dialog & the game
         game.load.image('tiles1', './js/assets/west_rpg.png');
         game.load.image('tiles2', './js/assets/the_man_set.png');
 
+        game.load.spritesheet('GM','./js/assets/the_man_set.png',32,32);
+
         loadArchives();
     },
     create: function () {
         console.log('call::create()');
-
-        //init a map:plain1
-        // load up tilemap
-        // map = game.add.tilemap('tile_map');
-        //
-        // // link loaded tileset image to map
-        // map.addTilesetImage('west_rpg', 'tiles1');
-        // map.addTilesetImage('the_man_set', 'tiles2');
-        //
-        // // create laye for said tileset and map now!
-        // layer_glass = map.createLayer('glass');
-        // layer_lava = map.createLayer('lava');
-        // layer_bridge = map.createLayer('bridge');
-        // layer_lives = map.createLayer('lives');
-        // layer_objs = map.createLayer('objs');
-        //
 
         Maps.plain1.reOpen();
         map.resizeWorld();
@@ -68,32 +54,18 @@ var mainState = {//the main dialog & the game
         player.facing = 3;//0 1 2 3 up down left right
 
         player.fixCamera = function () {
-            mainState.fixCameraTo(player.tile.worldX, player.tile.worldY);
+            // mainState.fixCameraTo(player.tile.texture.x + game.camera.x, player.tile.texture.y + game.camera.y);
+            mainState.fixCameraTo(player.tile.texture.x, player.tile.texture.y);
         }
 
         //控制初始化
         player.goTo = function (offsetX, offsetY) {
             //player go to
-            if (map.playerGoTo(offsetX,offsetY)) {
+            if (map.playerGoTo(offsetX, offsetY)) {
                 //signal
                 player.events.moveEvent.dispatch('fuck');
                 player.fixCamera();
             }
-
-            // var nextX = player.tile.x + offsetX;
-            // if (nextX < 0 || nextX >= map.width)return;
-            //
-            // var nextY = player.tile.y + offsetY;
-            // if (nextY < 0 || nextY >= map.height)return;
-            //
-            // if (!noStone(nextX, nextY))return;
-            //
-            // //move
-            // var tile = map.putTile(player.tile, nextX, nextY, layer_lives);
-            // map.putTile(null, player.tile.x, player.tile.y, layer_lives);//remove
-            // player.tile = tile;
-
-
         }
 
         player.aDown = function () {
@@ -119,13 +91,15 @@ var mainState = {//the main dialog & the game
         player.goRight = function () {
             player.goTo(1, 0);
             //change face
-            player.tile.index = 1026;
+            // player.tile.index = 1026;
+            player.tile.changeFrame(1);
             player.facing = 3;
         }
         player.goLeft = function () {
             player.goTo(-1, 0);
             //change face
-            player.tile.index = 1025;
+            // player.tile.index = 1025;
+            player.tile.changeFrame(0);
             player.facing = 2;
         }
 
