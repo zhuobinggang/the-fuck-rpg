@@ -26,9 +26,20 @@ Map.prototype.initObjsTileMap = function (numMap,height,width,cb) {
 }
 
 var Maps = {
-    plain1: new Map('plain1', stonesMap.plain1, {x: 4, y: 0}),
+    plain1: new Map('plain1', stonesMap.plain1, {x: 2, y: 0}),
+    home1: null,
 }
 Maps.plain1.reOpen = function () {
+    //init obj map
+    this.initObjsTileMap(this.stoneMap);
+
+    //render
+    this.render();
+
+    //set current map
+    map = this;
+}
+Maps.plain1.render = function () {
     this.map = game.add.tilemap('tile_map');
 
     // link loaded tileset image to map
@@ -39,19 +50,9 @@ Maps.plain1.reOpen = function () {
     this.layer_glass = this.map.createLayer('glass');
     this.layer_lava = this.map.createLayer('lava');
     this.layer_bridge = this.map.createLayer('bridge');
-    // this.layer_lives = this.map.createLayer('lives');
-    this.layer_lives = game.add.group();
+    this.layer_lives = game.add.group();//player in
     this.layer_objs = this.map.createLayer('objs');
-
-    //init obj map
-    this.initObjsTileMap();
-
-    //set current map
-    map = this;
 }
-// Maps.plain1.getPlayerTile = function () {
-//     return this.map.getTile(2, 0, this.layer_lives);
-// }
 Maps.plain1.getPlayerTile = function () {
     var x = this.playerPosition.x;
     var y = this.playerPosition.y;
@@ -71,15 +72,18 @@ Maps.plain1.getPlayerTile = function () {
 Maps.plain1.resizeWorld = function () {
     this.layer_bridge.resizeWorld();
 }
-Maps.plain1.initObjsTileMap = function () {
-    var obj_tile_map = Map.prototype.initObjsTileMap.call(this,this.stoneMap,25,25,function (num) {
-        if(num == 1)return {isStone:true};
-        return {isStone:false};
+Maps.plain1.initObjsTileMap = function (stoneMap) {
+    var obj_tile_map = Map.prototype.initObjsTileMap.call(this,stoneMap,25,25,function (num) {
+        var result = {isStone:false,encounterChance:0};
+        if(num == 1){
+            result.isStone = true;
+        }else if(num == 2){//草地怪物
+            result.encounterChance = 30;
+            result.enemies = [];//初始化可刷怪物列表
+        }
+        return result;
     })
     this.obj_tile_map = obj_tile_map;
-}
-Maps.plain1.checkStone = function (x, y) {
-
 }
 Maps.plain1.playerGoTo = function (offsetX, offsetY) {
     var nextX = player.tile.x + offsetX;
@@ -95,11 +99,20 @@ Maps.plain1.playerGoTo = function (offsetX, offsetY) {
     player.tile.x = nextX;
     player.tile.y = nextY;
     var nextTile = this.map.getTile(nextX,nextY);
-    // player.tile.texture.x = nextTile.worldX - game.camera.x;
-    // player.tile.texture.y = nextTile.worldY - game.camera.y;
-
     player.tile.texture.x = nextTile.worldX;
     player.tile.texture.y = nextTile.worldY;
 
+    //encounter enemies
+    this.encounter(nextX,nextY);
+
     return true;
+}
+Maps.plain1.encounter = function (x,y) {
+    var tile = this.obj_tile_map[x][y];
+    if(tile.encounterChance <= 0)return;
+    var rand = Math.floor(Math.random()*100);
+    console.info('摇到概率为'+rand);
+    if(rand < tile.encounterChance){
+        fightState.reOpen(['你爸爸']);
+    }
 }

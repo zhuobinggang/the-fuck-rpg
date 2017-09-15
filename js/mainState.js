@@ -63,7 +63,6 @@ var mainState = {//the main dialog & the game
             //player go to
             if (map.playerGoTo(offsetX, offsetY)) {
                 //signal
-                player.events.moveEvent.dispatch('fuck');
                 player.fixCamera();
             }
         }

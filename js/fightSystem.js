@@ -19,6 +19,7 @@ fightState.reOpen = function (enemies) {
  * 战斗系统
  */
 var FightSystem = {
+    
     onPlayerMove: function (test) {
         // console.info('player moved: '+test);
 
