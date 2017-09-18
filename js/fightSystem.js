@@ -19,7 +19,8 @@ fightState.init = function () {
             //观察敌人只弹窗就算了
             fightState.setVisible(false);
             selectEnemyDialog.reOpen(fightState.enemies, fightState, function cb(selectedItem) {
-                var message = "名称:" + selectedItem.name + "\n攻击力:2000 \n防御力:3000";
+                var message = "名称:" + selectedItem.name + "\n物理抗性:"+selectedItem.pysicDefense+
+                    "\n魔法抗性:"+selectedItem.magicDefense;
                 myAlertDialog.reOpen(message, function () {
                     selectEnemyDialog.setVisible(true);
                     currentCustomState = selectEnemyDialog;
@@ -85,6 +86,7 @@ fightState.reOpen = function (enemies, lastState) {
 
     //change state
     currentCustomState = fightState;
+    lastState.setVisible(false);
     fightState.setVisible(true);
     fightState.reRender();
 }
@@ -104,8 +106,8 @@ fightState.renderFightWindow = function () {
 
     fightState.fightWindowGroup.removeAll(true);
 
-    var leftStyle = {font: "bold 22px Arial", fill: "#9AFF9A", boundsAlignH: "left", boundsAlignV: "middle"};
-    var rightStyle = {font: "bold 22px Arial", fill: "#FFB5C5", boundsAlignH: "right", boundsAlignV: "middle"};
+    var leftStyle = {font: "bold 20px Arial", fill: "#9AFF9A", boundsAlignH: "left", boundsAlignV: "middle"};
+    var rightStyle = {font: "bold 20px Arial", fill: "#FFB5C5", boundsAlignH: "right", boundsAlignV: "middle"};
     var titleStyle = {font: "bold 22px Arial", fill: "#FFFFFF", boundsAlignH: "center", boundsAlignV: "middle"};
 
     //场景名称
@@ -232,7 +234,7 @@ fightState.newTurnStart = function () {
         mainState.gameReset();
         myAlertDialog.reOpen('你死了', function () {
             myAlertDialog.bDown();
-        }, mainState);
+        }, null,mainState);
     }
 }
 
@@ -285,8 +287,8 @@ fightState.checkFightOver = function () {
     var itemsLog = '获得道具:';
     for (var i = items.length - 1; i >= 0; i--) {
         itemsLog = itemsLog + items[i].name + ',';
+        player.getItem(items[i]);
     }
-    player.itemList = player.itemList.concat(items);
 
     this.close();
     myAlertDialog.reOpen('获得经验:' + exp + '\n' + itemsLog, function () {

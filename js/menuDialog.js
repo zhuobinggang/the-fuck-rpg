@@ -3,7 +3,7 @@
  */
 var menuDialog = new ListBox(5);
 menuDialog.textGroup = null;
-menuDialog.font = {font: "bold 32px Arial", fill: "#fff", boundsAlignH: "center", boundsAlignV: "middle"};
+menuDialog.font = {font: "bold 25px Arial", fill: "#9AFF9A", boundsAlignH: "center", boundsAlignV: "middle"};
 menuDialog.init = function () {
     menuDialog.textGroup = game.add.group();
     menuDialog.textGroup.visible = false;

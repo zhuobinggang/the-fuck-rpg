@@ -1,61 +1,81 @@
 /**
  * Created by zhuo on 2017/9/17.
  */
-class Enemy extends LiveObject{
-    constructor(name,mh,pp,mp,pd,md,speed,exp){
-        super(name,mh,pp,mp,pd,md,speed);
+class Enemy extends LiveObject {
+    constructor(name, mh, pp, mp, pd, md, speed, exp) {
+        super(name, mh, pp, mp, pd, md, speed);
         this.exp = exp || 1;
         this.isLiving = true;
         this.items = [];//携带道具
     }
+
     effectFromInFight(item, src) {
-        if(item.effective){
-            item.effective(this,src);
+        if (item.effective) {
+            item.effective(this, src);
         }
         this.checkDeath();
     }
-    effectFromSkill(skill,src){
-        if(skill.effective){
-            skill.effective(this,src);
+
+    effectFromSkill(skill, src) {
+        if (skill.effective) {
+            skill.effective(this, src);
         }
         this.checkDeath();
     }
-    checkDeath(){
-        if(this.health < 1){
+
+    checkDeath() {
+        if (this.health < 1) {
             this.isLiving = false;
         }
     }
-    fuckPlayer(){//AI逻辑
+
+    fuckPlayer() {//AI逻辑
         var skill = Skills.normalPysicAttack;
         player.effectFromSkill(skill);
-        fightState.addLog(this.name+'对'+player.name+'释放了:'+skill.name);
+        fightState.addLog(this.name + '对' + player.name + '释放了:' + skill.name);
     }
 }
 
 var Monsters = {
-    king: new Enemy('王♂',20,9,3,3,3,1,10),
-    king2: new Enemy('哲学家♂',20,3,9,3,3,14,10),
-    goblin: new Enemy('哥布林',10,3,3,3,3,2,2),
-    slime: new Enemy('史莱姆',10,3,3,3,3,2,2)
+    king: new Enemy('王♂', 20, 9, 3, 3, 3, 1, 10),
+    king2: new Enemy('哲学家♂', 20, 3, 9, 3, 3, 14, 10),
+    goblin: new Enemy('哥布林', 10, 3, 3, 3, 3, 2, 2),
+    slime: new Enemy('史莱姆', 10, 3, 3, 3, 3, 2, 2),
+    bossOfOne: new Enemy('买菜路过的地狱死神', 99, 12, 12, 5, 5, 4, 100)
+    //TODO: 完成boss设计
 }
+//第一层
 Monsters.king.fuckPlayer = function () {
     var skill = Skills.normalPysicAttack;
     // player.effectFromSkill(skill);
-    skill.effective(player,this);
-    fightState.addLog(this.name+'露出意味深长的微笑,对'+player.name+'释放了:'+skill.name);
+    skill.effective(player, this);
+    fightState.addLog(this.name + '露出意味深长的微笑,对' + player.name + '释放了:' + skill.name);
 }
 Monsters.king2.fuckPlayer = function () {
     var skill = Skills.normalMagicAttack;
-    skill.effective(player,this);
-    fightState.addLog(this.name+'露出意味深长的微笑,对'+player.name+'释放了:'+skill.name);
+    skill.effective(player, this);
+    fightState.addLog(this.name + '露出意味深长的微笑,对' + player.name + '释放了:' + skill.name);
 }
 Monsters.goblin.fuckPlayer = function () {
     var skill = Skills.normalPysicAttack;
-    skill.effective(player,this);
-    fightState.addLog(this.name+'对'+player.name+'释放了:'+skill.name);
+    skill.effective(player, this);
+    fightState.addLog(this.name + '对' + player.name + '释放了:' + skill.name);
 }
-Monsters.king2.fuckPlayer = function () {
+Monsters.slime.fuckPlayer = function () {
     var skill = Skills.normalMagicAttack;
-    skill.effective(player,this);
-    fightState.addLog(this.name+'对'+player.name+'释放了:'+skill.name);
+    skill.effective(player, this);
+    fightState.addLog(this.name + '对' + player.name + '释放了:' + skill.name);
+}
+Monsters.bossOfOne.fuckPlayer = function () {
+    var skill = Skills.frameDeathChop;
+    skill.effective(player, this);
+    fightState.addLog(this.name + '对' + player.name + '释放了:' + skill.name);
+}
+Monsters.bossOfOne.checkDeath = function () {
+    Enemy.prototype.checkDeath.call(this);
+    if (!this.isLiving) {
+        var theBossTile = Maps.plain1.obj_tile_map[20][21];
+        theBossTile.isStone = false;
+        theBossTile.beInterestedCallback = null;
+    }
 }

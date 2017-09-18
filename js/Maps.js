@@ -84,52 +84,94 @@ Maps.plain1.initObjsTileMap = function (stoneMap) {
         if (num == 1) {
             result.isStone = true;
         } else if (num == 2) {//浓密草地
-            result.encounterChance = 20;
-            result.spawnEnemies = function () {
-                //刷王和哲学家
-                var seed = Math.floor(Math.random() * 2);
-                if(seed == 0){//0 的时候刷王
-                    var king = Object.create(Monsters.king);
-
-                    //算装备掉落率
-                    var godHandSeed = Math.floor(Math.random() * 10);
-                    if(godHandSeed < 4){
-                        king.items = [Items.godHand];
-                    }
-                    king.items.push(Items.apple);
-
-                    return [king];
-                }else{
-                    var king2 = Object.create(Monsters.king2);
-
-                    var godHandSeed = Math.floor(Math.random() * 10);
-                    if(godHandSeed < 4){
-                        king2.items = [Items.faQ];
-                    }
-                    king2.items.push(Items.apple);
-
-                    return [king2];
-                }
+            result = Maps.plain1.getDeepGlassTileObj(result);
+        } else if (num == 0) {//浅草地
+            result = Maps.plain1.getGlassTileObj(result);
+        } else if (num == 10){//石碑1
+            result.isStone = true;
+            //读取石碑内容
+            result.beInterestedCallback = function () {
+                var message = 'Sword Eat Online 第一层\n\n'+'主要掉落物: \n'+
+                        '苹果,木剑,神之手,FaQ\n'+'Tips:深草区是刷怪地点\n'+'打倒Boss进入第二层!';
+                myAlertDialog.reOpen(message,function () {
+                    myAlertDialog.bDown();
+                },null,mainState);
             }
-        } else if(num == 0){//浅草地
-            result.encounterChance = 50;
-            result.spawnEnemies = function () {
-                var seed = Math.floor(Math.random() * 2);
-                if(seed == 0){//0 的时候刷史莱姆
-                    var slime = Object.create(Monsters.slime);
-                    //算装备掉落率
-                    slime.items = [Items.apple];
-                    return [slime];
-                }else{
-                    var goblin = Object.create(Monsters.goblin);
-                    goblin.items = [Items.stick];
-                    return [goblin];
-                }
+        } else if (num == 11){//植物
+            result.isStone = true;
+            result.beInterestedCallback = function () {
+                var message = '爸爸送你一把神器\n'+'按A说谢谢爸爸\n'+
+                        '按B拒绝\n'+'温馨提示:机会只有一次';
+                myAlertDialog.reOpen(message,function () {
+                    player.getItem(Items.OSUPlayer);
+                    //清除这个效果
+                    result.beInterestedCallback = function () {
+                        myAlertDialog.reOpen('还想拿?QQ问爸爸要',function () {
+                            myAlertDialog.bDown();
+                        },null,mainState);
+                    }
+                },null,mainState);
+            }
+        } else if (num == 12){//植物
+            result.isStone = true;
+            result.beInterestedCallback = function () {
+                var message = '看起来像是Boss的样子\n'+'按A进入战斗\n'+
+                        '按B跑路\n';
+                myAlertDialog.reOpen(message,function () {
+                    fightState.reOpen([Object.create(Monsters.bossOfOne)],mainState);
+                },null,mainState);
             }
         }
         return result;
     })
     this.obj_tile_map = obj_tile_map;
+}
+Maps.plain1.getDeepGlassTileObj = function (result) {
+    result.encounterChance = 10;
+    result.spawnEnemies = function () {
+        //刷王和哲学家
+        var seed = Math.floor(Math.random() * 2);
+        if (seed == 0) {//0 的时候刷王
+            var king = Object.create(Monsters.king);
+
+            //算装备掉落率
+            var godHandSeed = Math.floor(Math.random() * 10);
+            if (godHandSeed < 4) {
+                king.items = [Items.godHand];
+            }
+            king.items = [Items.apple];
+
+            return [king];
+        } else {
+            var king2 = Object.create(Monsters.king2);
+
+            var godHandSeed = Math.floor(Math.random() * 10);
+            if (godHandSeed < 4) {
+                king2.items = [Items.faQ];
+            }
+            king2.items = [Items.apple];
+
+            return [king2];
+        }
+    }
+    return result;
+}
+Maps.plain1.getGlassTileObj = function (result) {
+    result.encounterChance = 10;
+    result.spawnEnemies = function () {
+        var seed = Math.floor(Math.random() * 2);
+        if (seed == 0) {//0 的时候刷史莱姆
+            var slime = Object.create(Monsters.slime);
+            //算装备掉落率
+            slime.items = [Items.apple];
+            return [slime];
+        } else {
+            var goblin = Object.create(Monsters.goblin);
+            goblin.items = [Items.stick];
+            return [goblin];
+        }
+    }
+    return result;
 }
 Maps.plain1.playerGoTo = function (offsetX, offsetY) {
     var nextX = player.tile.x + offsetX;
@@ -160,6 +202,15 @@ Maps.plain1.setVisible = function (visible) {
     this.layer_lava.visible = visible;
     this.layer_objs.visible = visible;
 }
+Maps.plain1.playerInterestOn = function (x,y) {
+    var obj = this.obj_tile_map[x][y];
+    console.log(JSON.stringify(obj));
+    if(obj.beInterestedCallback){
+        obj.beInterestedCallback();
+    }else{
+        console.warn('该方块没有事件可以触发');
+    }
+}
 Maps.plain1.encounter = function (x, y) {
     var tile = this.obj_tile_map[x][y];
     if (tile.encounterChance <= 0)return;
@@ -172,7 +223,7 @@ Maps.plain1.encounter = function (x, y) {
         currentCustomState = fightState;
 
         // fightState.reOpen([Object.create(Monsters.king),Object.create(Monsters.king2)]);
-        fightState.reOpen(tile.spawnEnemies());
+        fightState.reOpen(tile.spawnEnemies(),mainState);
 
         // function cb(item, src) {
         //     console.log(this.name + '被' + src.name + '使用了' + item.name);

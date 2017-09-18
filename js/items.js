@@ -65,6 +65,7 @@ var Items = {
     godHand: new Item("神之手","物理攻击力挺高的", 0, 5, 0, 0, 0, 0, 0,false),
     faQ: new Item("FaQ!","emmm这是什么?", 0, 0, 5, 0, 0, 0, 0,false),
     apple: new Item("苹果","HP + 20", 0, 0, 0, 0, 0, -20, 0,true),
+    OSUPlayer: new Item("OSU玩家的头","只是普通的OSU玩家的头而已", 20, 5, 5, 5, 5, 0, 0,false),
 }
 Items.egg.canUseInFight = true;
 Items.apple.effective = function (target,src) {
@@ -103,5 +104,6 @@ class Skill{
 }
 var Skills = {
     normalPysicAttack: new Skill(),
-    normalMagicAttack: new Skill('普通魔法攻击','很普通的魔法攻击',2,0.0,0.0,0)
+    normalMagicAttack: new Skill('普通魔法攻击','很普通的魔法攻击',2,0.0,0.0,0),
+    frameDeathChop: new Skill('烈焰死亡镰刃','很普通的烈焰死亡镰刃攻击',3,0.0,0.0,-5)
 }

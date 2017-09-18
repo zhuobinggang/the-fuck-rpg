@@ -77,7 +77,7 @@ class LiveObject extends Entity{
             if(magicDamage < 0)magicDamage =0;
         }
 
-        // console.log('物理伤害结算前'+pysicDamage+' 魔法伤害结算前:'+magicDamage);
+        // console.log('物理伤害结算后'+pysicDamage+' 魔法伤害结算后:'+magicDamage);
 
         this.healthChange(pysicDamage+magicDamage);
     }

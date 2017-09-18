@@ -2,7 +2,8 @@
  * Created by zhuo on 2017/9/17.
  */
 function playerInteractiveInit() {
-    player.itemList = [Items.egg, Items.stick];
+    player.itemList = [{item: Items.egg, num: 1}, {item: Items.stick, num: 1}];
+    // player.itemList = [Items.egg, Items.stick];
     player.equipmentList = [];
     player.equipmentMaxNum = 5;//最多五件装备
     player.skills = [Skills.normalMagicAttack, Skills.normalPysicAttack];
@@ -10,8 +11,9 @@ function playerInteractiveInit() {
     player.effectFrom = function (item, src) {
         //使用后删除
         if (src) {
-            var index = src.itemList.indexOf(item);
-            if (index >= 0) src.itemList.splice(index, 1);
+            // var index = src.itemList.indexOf(item);
+            // if (index >= 0) src.itemList.splice(index, 1);
+            src.discardItem(item);
         }
 
         //道具生效
@@ -37,8 +39,9 @@ function playerInteractiveInit() {
 
         //从道具列表中删除
         if (src) {
-            var index = src.itemList.indexOf(item);
-            if (index >= 0) src.itemList.splice(index, 1);
+            // var index = src.itemList.indexOf(item);
+            // if (index >= 0) src.itemList.splice(index, 1);
+            src.discardItem(item);
         }
 
         //装备到装备列表
@@ -60,7 +63,15 @@ function playerInteractiveInit() {
     player.getItem = function (item, src) {
         src = src || {name: "你爸爸"}
         console.info('从 ' + src.name + ' 那获得道具 ' + item.name);
-        player.itemList.push(item);
+        // player.itemList.push(item);
+        for (var i = player.itemList.length - 1; i >= 0; i--) {
+            var itemObj = player.itemList[i];
+            if (itemObj.item == item) {
+                itemObj.num = itemObj.num + 1;
+                return;
+            }
+        }
+        player.itemList.push({num:1,item:item});
     }
     player.healthChange = function (damage) {
         LiveObject.prototype.healthChange.call(this, damage);
@@ -85,15 +96,27 @@ function playerInteractiveInit() {
 
         //扔回道具栏
         player.equipmentList.splice(index, 1);
-        player.itemList.push(equipment);
+        // player.itemList.push(equipment);
+        player.getItem(equipment);
     }
     player.discardItem = function (item, src) {
-        var index = player.itemList.indexOf(item);
-        if (index >= 0) player.itemList.splice(index, 1);
-        else {
-            console.warn("没有这件道具");
-            return;
+        // var index = player.itemList.indexOf(item);
+        // if (index >= 0) player.itemList.splice(index, 1);
+        // else {
+        //     console.warn("没有这件道具");
+        //     return;
+        // }
+        for (var i = player.itemList.length - 1; i >= 0; i--) {
+            var itemObj = player.itemList[i];
+            if (itemObj.item == item) {
+                itemObj.num = itemObj.num - 1;
+                if (itemObj.num <= 0) {
+                    player.itemList.splice(i,1);
+                }
+                return;
+            }
         }
+        console.warn("没有这件道具");
     }
 
     //获取可以在战斗中使用的道具
@@ -176,15 +199,16 @@ function initPlayer() {
 }
 function playerReset() {
     //减去属性
-    for(var i = 0;i<player.equipmentList.length;i++){
+    for (var i = 0; i < player.equipmentList.length; i++) {
         player.subEquipProperty(player.equipmentList[i]);
     }
 
     player.tile = map.getPlayerTile();
     player.health = 100;
     player.facing = 3;//0 1 2 3 up down left right
-    player.itemList = [Items.egg, Items.stick];
+    // player.itemList = [Items.egg, Items.stick];
+    player.itemList = [{item: Items.egg, num: 1}, {item: Items.stick, num: 1}];
     player.equipmentList = [];
     player.equipmentMaxNum = 5;//最多五件装备
-    player.skills = [Skills.normalMagicAttack,Skills.normalPysicAttack];
+    player.skills = [Skills.normalMagicAttack, Skills.normalPysicAttack];
 }

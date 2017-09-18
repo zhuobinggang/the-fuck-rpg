@@ -2,7 +2,7 @@
  * Created by zhuo on 2017/9/3.
  */
 
-var itemDialog = new ListBox(5);
+var itemDialog = new ListBox(8);
 itemDialog.group = null;
 itemDialog.lastState = null;
 itemDialog.init = function () {
@@ -30,17 +30,17 @@ itemDialog.render = function () {
     (function updateTexts() {
         var list = itemDialog.displayList;
         for (var i = list.length - 1; i >= 0; i--) {
-            var text = game.add.text(0, 0, list[i].name, style);
-            text.setTextBounds(0, i * 100, 500, 100);
+            var text = game.add.text(0, 0, list[i].item.name + '\t X' +list[i].num, style);
+            text.setTextBounds(0, i * 62, 500, 62);
             text.fixedToCamera = true;
             itemDialog.group.add(text);
         }
     })();
 
-    var barY = (itemDialog.thePointer - itemDialog.displayListStart) * 100;
+    var barY = (itemDialog.thePointer - itemDialog.displayListStart) * 62;
     var bar = game.add.graphics();
     bar.beginFill(0x000000, 0.2);
-    bar.drawRect(0, barY, 500, 100);
+    bar.drawRect(50, barY, 400, 62);
     bar.fixedToCamera = true;
     itemDialog.group.add(bar);
 }
@@ -67,7 +67,7 @@ itemDialog.aDown = function () {
     // console.info('seleted item is:'+itemDialog.getSelectedItem().name);
     var selected = itemDialog.getSelectedItem();
     if (!selected)return;
-    itemShowDialog.reSetItem(selected);
+    itemShowDialog.reSetItem(selected.item);
     itemShowDialog.reOpen();
 }
 itemDialog.bDown = function () {

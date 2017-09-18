@@ -61,7 +61,20 @@ var mainState = {//the main dialog & the game
         player.goDown();
     },
     aDown: function () {
-        player.aDown();
+        //触发感兴趣事件
+        var x = player.tile.x;
+        var y = player.tile.y;
+        if(player.facing == 0){
+            y = y - 1;
+        }else if(player.facing == 1){
+            y = y + 1;
+        }else if(player.facing == 2){
+            x = x - 1;
+        }else if(player.facing == 3){
+            x = x + 1;
+        }
+
+        map.playerInterestOn(x,y);
     },
     bDown: function () {
         player.bDown();
