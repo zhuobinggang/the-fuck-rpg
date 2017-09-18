@@ -15,7 +15,9 @@ var mainState = {//the main dialog & the game
     create: function () {
         console.log('call::create()');
 
-        Maps.plain1.reOpen();
+        //加载地图
+        Maps.plain1.init();
+
         map.resizeWorld();
         mainState.initPlayer();
         // mainState.initObjsTileMap();
@@ -28,6 +30,8 @@ var mainState = {//the main dialog & the game
         roleDialog.init();
         menuDialog.init();
         fightState.init();
+        fightItemDialog.init();
+        selectEnemyDialog.init();
         myAlertDialog.init();
         itemShowDialog.init();
         equipShowDialog.init();
@@ -42,71 +46,7 @@ var mainState = {//the main dialog & the game
 
     },
     initPlayer: function () {
-        player = new LiveObject('管理员', 100, 1, 1, 0, 0, 10);
-
-        //玩家用户事件初始化
-        player.events = {}
-        player.events.moveEvent = new Phaser.Signal();
-        player.events.moveEvent.add(FightSystem.onPlayerMove);
-
-        // player.tile = map.getTile(2, 0, layer_lives);
-        player.tile = map.getPlayerTile();
-        player.facing = 3;//0 1 2 3 up down left right
-
-        player.fixCamera = function () {
-            // mainState.fixCameraTo(player.tile.texture.x + game.camera.x, player.tile.texture.y + game.camera.y);
-            mainState.fixCameraTo(player.tile.texture.x, player.tile.texture.y);
-        }
-
-        //控制初始化
-        player.goTo = function (offsetX, offsetY) {
-            //player go to
-            if (map.playerGoTo(offsetX, offsetY)) {
-                //signal
-                player.fixCamera();
-            }
-        }
-
-        player.aDown = function () {
-
-        }
-        player.bDown = function () {
-            currentCustomState = menuDialog;
-        }
-
-        function noStone(nextX, nextY) {
-            return (!obj_tile_map[nextX][nextY] || !obj_tile_map[nextX][nextY].isStone);
-        }
-
-        player.goDown = function () {
-            //colddown operation
-            player.goTo(0, 1);
-            player.facing = 1;
-        }
-        player.goUp = function () {
-            player.goTo(0, -1);
-            player.facing = 0;
-        }
-        player.goRight = function () {
-            player.goTo(1, 0);
-            //change face
-            // player.tile.index = 1026;
-            player.tile.changeFrame(1);
-            player.facing = 3;
-        }
-        player.goLeft = function () {
-            player.goTo(-1, 0);
-            //change face
-            // player.tile.index = 1025;
-            player.tile.changeFrame(0);
-            player.facing = 2;
-        }
-
-        //道具使用初始化
-        playerInteractiveInit();
-
-        //目标对象
-        player.target = player;//初始目标对象是自己
+        initPlayer();
     },
     goLeft: function () {
         player.goLeft();
@@ -148,7 +88,18 @@ var mainState = {//the main dialog & the game
     fixCameraTo: function (x, y) {
         game.camera.focusOnXY(x, y);
     },
-
+    reOpen: function () {
+        map.reOpen();
+    },
+    close: function () {
+        map.close();
+    },
+    setVisible: function (visible) {
+        map.setVisible(visible);
+    },
+    gameReset: function () {
+        playerReset();
+    }
 }
 //加载存档
 loadArchives = function () {

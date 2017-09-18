@@ -37,107 +37,51 @@ class LiveObject extends Entity{
         this.magicDefense -= md || 0;
     }
 
+    addProperty(mh, pp, mp, pd, md) {
+        this.maxHealth += mh || 0;
+        this.pysicPower += pp || 0;
+        this.magicPower += mp || 0;
+        this.pysicDefense += pd || 0;
+        this.magicDefense += md || 0;
+    }
+
+    effectFromItem(item){
+        // this.addProperty(item.maxHealth,item.pysicPower,item.magicPower,
+        // item.pysicDefense,item.magicDamage);
+
+        //道具生效
+        if(item.effective){
+            item.effective(this);
+        }
+    }
+
     healthChange(damage) {
         damage = damage || 0;
         this.health -= damage;
-        console.info('Life health changed! ' + this.health);
+
+        if(this.health > this.maxHealth){
+            this.health = this.maxHealth;
+        }
+        // console.info('Life health changed! ' + this.health);
     }
 
     damageFrom(pysicDamage,magicDamage){
         pysicDamage = pysicDamage || 0;
         magicDamage = magicDamage || 0;
         if (pysicDamage > 0) {//如果是伤害道具
-            pysicDamage -= this.pysicDefense;
-            pysicDamage = (pysicDamage < 0) ? 0 : pysicDamage;
+            pysicDamage = pysicDamage - this.pysicDefense;
+            if(pysicDamage < 0)pysicDamage = 0;
         }
         if (magicDamage > 0) {//如果是伤害道具
-            magicDamage -= player.magicDefense;
-            magicDamage = (magicDamage < 0) ? 0 : magicDamage;
+            magicDamage = magicDamage - this.magicDefense;
+            if(magicDamage < 0)magicDamage =0;
         }
+
+        // console.log('物理伤害结算前'+pysicDamage+' 魔法伤害结算前:'+magicDamage);
 
         this.healthChange(pysicDamage+magicDamage);
     }
 }
 
-function playerInteractiveInit() {
-    player.itemList = [Items.egg, Items.excalibur, Items.stick];
-    player.equipmentList = [];
-    player.equipmentMaxNum = 5;//最多五件装备
 
-    player.effectFrom = function (item, src) {
-        //使用后删除
-        if (src) {
-            var index = src.itemList.indexOf(item);
-            if (index >= 0) src.itemList.splice(index, 1);
-        }
 
-        player.damageFrom(item.pysicDamage,item.magicDamage);
-    }
-    player.wearEquipment = function (item, src) {
-        //检查装备容量
-        if (player.equipmentList.length >= player.equipmentMaxNum) {
-            console.warn("超出装备容量上限");
-            return;
-        }
-        console.info("装备了道具:" + item.name);
-
-        //从道具列表中删除
-        if (src) {
-            var index = src.itemList.indexOf(item);
-            if (index >= 0) src.itemList.splice(index, 1);
-        }
-
-        //装备到装备列表
-        player.equipmentList.push(item);
-
-        //重新计算数值
-        var healthMaxUp = item.maxHealth || 0;
-        var pysicPower = item.pysicPower || 0;
-        var magicPower = item.magicPower || 0;
-        var pysicDefense = item.pysicDefense || 0;
-        var magicDefense = item.magicDefense || 0;
-        player.maxHealth += healthMaxUp;
-        player.pysicPower += pysicPower;
-        player.magicPower += magicPower;
-        player.pysicDefense += pysicDefense;
-        player.magicDefense += magicDefense;
-    }
-    player.getItem = function (item, src) {
-        src = src || {name: "你爸爸"}
-        console.info('从 ' + src.name + ' 那获得道具 ' + item.name);
-        player.itemList.push(item);
-    }
-    player.healthChange = function (damage) {
-        LiveObject.prototype.healthChange.call(this,damage);
-        console.info('扩展了父类方法');
-    }
-    player.subEquipProperty = function (item) {
-        if (!item)return;
-        player.subProperty(
-            item.maxHealth, item.pysicPower, item.magicPower,
-            item.pysicDefense, item.magicDefense
-        );
-    }
-    player.discardEquipment = function (equipment, src) {
-        var index = player.equipmentList.indexOf(equipment);
-        if (index < 0) {
-            console.warn("没有这件武器");
-            return;
-        }
-
-        //减去属性
-        player.subEquipProperty(equipment);
-
-        //扔回道具栏
-        player.equipmentList.splice(index, 1);
-        player.itemList.push(equipment);
-    }
-    player.discardItem = function (item, src) {
-        var index = player.itemList.indexOf(item);
-        if (index >= 0) player.itemList.splice(index, 1);
-        else {
-            console.warn("没有这件道具");
-            return;
-        }
-    }
-}

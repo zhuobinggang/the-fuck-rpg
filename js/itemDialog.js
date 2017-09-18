@@ -4,21 +4,22 @@
 
 var itemDialog = new ListBox(5);
 itemDialog.group = null;
+itemDialog.lastState = null;
 itemDialog.init = function () {
     itemDialog.group = game.add.group();
     // itemDialog.list.push(Items.stick,Items.egg);
     //从用户背包初始化
-    itemDialog.list = player.itemList;
-    itemDialog.displayList = itemDialog.list.slice(itemDialog.thePointer, itemDialog.maxDisplayLength);
+    // itemDialog.list = player.itemList;
+    // itemDialog.displayList = itemDialog.list.slice(itemDialog.thePointer, itemDialog.maxDisplayLength);
 }
-itemDialog.reOpen = function () {
-    //重新更新显示位置
-    itemDialog.thePointer = 0;
-    itemDialog.displayListStart = 0;
-    itemDialog.displayList = itemDialog.list.slice(itemDialog.thePointer, itemDialog.maxDisplayLength);
+itemDialog.reOpen = function (itemList,lastState) {
+    //复用道具菜单
+    itemDialog.list = itemList || player.itemList;
+    itemDialog.lastState = lastState || menuDialog;
+    itemDialog.reset();
 
     currentCustomState = itemDialog;
-    menuDialog.setVisible(false);
+    // lastState.setVisible(false);
     itemDialog.setVisible(true);
     itemDialog.render();
 }
@@ -48,9 +49,9 @@ itemDialog.setVisible = function (visible) {
 }
 itemDialog.close = function () {
     //change current custom state
-    currentCustomState = menuDialog;
+    currentCustomState = itemDialog.lastState;
     itemDialog.setVisible(false);
-    menuDialog.setVisible(true);
+    itemDialog.lastState.setVisible(true);
 }
 itemDialog.goDown = function () {
     itemDialog.thePointer++;

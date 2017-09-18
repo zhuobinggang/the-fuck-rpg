@@ -61,6 +61,7 @@ menuDialog.aDown = function () {
     //click OK
     var selected = menuDialog.getSelectedItem();
     console.info('selected item=' + selected.name);
+    this.setVisible(false);
     selected.aDown();
 };
 menuDialog.bDown = function () {

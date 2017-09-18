@@ -37,6 +37,12 @@ class ListBox {
         this.maxDisplayLength = maxLength;
     }
 
+    reset() {
+        this.thePointer = 0;
+        this.displayListStart = 0;
+        this.displayList = this.list.slice(this.thePointer, this.maxDisplayLength);
+    }
+
     displayListUpdate() {
         var max = this.maxDisplayLength;
         var start = this.displayListStart;
@@ -90,7 +96,7 @@ class ListBox {
     };
 
     getSelectedItem() {
-        var selected = this.list[this.thePointer - this.displayListStart];
+        var selected = this.list[this.thePointer];
         return selected;
     };
 }
@@ -103,7 +109,15 @@ myAlertDialog.init = function () {
     myAlertDialog.group = game.add.group();
     myAlertDialog.group.visible = false;
 }
-myAlertDialog.reOpen = function (msg, cb) {
+myAlertDialog.reOpen = function (msg, cb ,style, exitState) {
+    this.style = style || {
+        font: "bold 32px Arial",
+        fill: "#4EEE94",
+        boundsAlignH: "center",
+        boundsAlignV: "middle"
+    };
+    this.exitState = exitState || mainState;
+
     currentCustomState = myAlertDialog;
     myAlertDialog.msg = msg || '没有信息';
     myAlertDialog.cb = cb || function () {
@@ -122,11 +136,11 @@ myAlertDialog.render = function () {
 
     var bg = game.add.graphics();
     bg.beginFill(0x000000);
-    bg.drawRect(0,0,500,500);
+    bg.drawRect(0, 0, 500, 500);
     showUICorrect(bg);
 
-    var text = game.add.text(0,0,myAlertDialog.msg,{font: "bold 32px Arial", fill: "#4EEE94", boundsAlignH: "center", boundsAlignV: "middle"});
-    text.setTextBounds(100,100,300,300);
+    var text = game.add.text(0, 0, myAlertDialog.msg, this.style);
+    text.setTextBounds(100, 100, 300, 300);
     showUICorrect(text);
 }
 myAlertDialog.aDown = function () {
@@ -135,5 +149,114 @@ myAlertDialog.aDown = function () {
 }
 myAlertDialog.bDown = function () {
     myAlertDialog.group.visible = false;
-    currentCustomState = mainState;
+    currentCustomState = this.exitState;
+    this.exitState.setVisible(true);
 };
+
+/**
+ * Created by zhuo on 2017/9/4.
+ */
+// function ListBoxExtend(maxLength) {
+//     ListBox.prototype.constructor.call(this, maxLength);
+//     this.exitState = null;//出口状态
+//     this.cb = null;//选择后需要做的事情
+// }
+// ListBoxExtend.prototype = Object.create(ListBox.prototype);
+// ListBoxExtend.prototype.constructor = ListBoxExtend;
+// ListBoxExtend.prototype.reOpen = function (itemList, exitState, cb) {
+//     this.list = itemList || player.itemList;
+//     this.exitState = exitState || fightState;
+//     this.cb = cb || function () {
+//             var selected = selectEnemyDialog.getSelectedItem();
+//             if (!selected)return;
+//             console.info('seleted item is:' + selectEnemyDialog.getSelectedItem().name);
+//         }
+//
+//     this.reset();
+//     currentCustomState = this;
+//     this.setVisible(true);
+//     this.render();
+// }
+// ListBoxExtend.prototype.render = function () {
+//     console.warn("请扩展渲染方法");
+// }
+// ListBoxExtend.prototype.setVisible = function () {
+//     console.warn("请扩展设置可见方法");
+// }
+// ListBoxExtend.prototype.goUp = function () {
+//     ListBox.prototype.goUp.call(this);
+//     this.render();
+// }
+// ListBoxExtend.prototype.goDown = function () {
+//     ListBox.prototype.goDown.call(this);
+//     this.render();
+// }
+// ListBoxExtend.prototype.bDown = function () {
+//     currentCustomState = this.exitState;
+//     this.setVisible(false);
+//     this.exitState.setVisible(true);
+// }
+// ListBoxExtend.prototype.aDown = function () {
+//     var selected = this.getSelectedItem();
+//     if (!selected) {
+//         console.warn('请确认选项不为空');
+//         return;
+//     }
+//     this.cb(selected);
+// }
+
+class ListBoxExtend extends ListBox {
+    constructor(maxLength) {
+        super(maxLength);
+        this.exitState = null;//出口状态
+        this.cb = null;//选择后需要做的事情
+    }
+
+    reOpen(itemList, exitState, cb) {
+        this.list = itemList || player.itemList;
+        this.exitState = exitState || fightState;
+        this.cb = cb || function () {
+                var selected = selectEnemyDialog.getSelectedItem();
+                if (!selected)return;
+                console.info('seleted item is:' + selectEnemyDialog.getSelectedItem().name);
+            }
+
+        this.reset();
+        currentCustomState = this;
+        this.setVisible(true);
+        this.render();
+    }
+
+    render() {
+        console.warn("请扩展渲染方法");
+    }
+
+    setVisible() {
+        console.warn("请扩展设置可见方法");
+    }
+
+    goUp() {
+        ListBox.prototype.goUp.call(this);
+        this.render();
+    }
+
+    goDown() {
+        ListBox.prototype.goDown.call(this);
+        this.render();
+    }
+
+    bDown() {
+        currentCustomState = this.exitState;
+        this.setVisible(false);
+        this.exitState.setVisible(true);
+    }
+
+    aDown() {
+        var selected = this.getSelectedItem();
+        if (!selected) {
+            console.warn('请确认选项不为空');
+            return;
+        }
+        this.cb(selected);
+    }
+}
