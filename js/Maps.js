@@ -48,6 +48,9 @@ Maps.plain1.init = function () {
 
     //set current map
     map = this;
+
+    //resize world
+    map.resizeWorld();
 }
 Maps.plain1.reOpen = function () {
     currentCustomState = mainState;
@@ -65,8 +68,18 @@ Maps.plain1.getPlayerTile = function () {
     var tile = this.map.getTile(x, y);
     var texture = game.add.image(tile.worldX, tile.worldY, 'GM', 1);
     // this.layer_lives.addChild(texture);
+    this.layer_lives.removeAll(true);
     this.layer_lives.add(texture);
-    return {
+    // return {
+    //     x: x,
+    //     y: y,
+    //     texture: texture,
+    //     changeFrame: function (frame) {
+    //         player.tile.texture.frame = frame;
+    //     }
+    // };
+    //初始化玩家图片
+    player.tile = {
         x: x,
         y: y,
         texture: texture,
@@ -74,6 +87,7 @@ Maps.plain1.getPlayerTile = function () {
             player.tile.texture.frame = frame;
         }
     };
+    player.facing = 3;//0 1 2 3 up down left right
 }
 Maps.plain1.resizeWorld = function () {
     this.layer_bridge.resizeWorld();
@@ -110,6 +124,7 @@ Maps.plain1.initObjsTileMap = function (stoneMap) {
                             myAlertDialog.bDown();
                         },null,mainState);
                     }
+                    myAlertDialog.bDown();
                 },null,mainState);
             }
         } else if (num == 12){//植物
@@ -136,20 +151,23 @@ Maps.plain1.getDeepGlassTileObj = function (result) {
 
             //算装备掉落率
             var godHandSeed = Math.floor(Math.random() * 10);
-            if (godHandSeed < 4) {
-                king.items = [Items.godHand];
-            }
+
             king.items = [Items.apple];
+            if (godHandSeed < 4) {
+                // console.log('加上武器');
+                king.items.push(Items.godHand);
+            }
 
             return [king];
         } else {
             var king2 = Object.create(Monsters.king2);
 
             var godHandSeed = Math.floor(Math.random() * 10);
-            if (godHandSeed < 4) {
-                king2.items = [Items.faQ];
-            }
             king2.items = [Items.apple];
+            if (godHandSeed < 4) {
+                // console.log('加上武器');
+                king2.items.push(Items.faQ);
+            }
 
             return [king2];
         }
@@ -244,4 +262,10 @@ Maps.plain1.encounter = function (x, y) {
         //     }}
         // ]);
     }
+}
+Maps.plain1.reset = function () {
+    //重置砖块对象
+    this.initObjsTileMap(this.stoneMap);
+
+    // this.init();
 }

@@ -63,11 +63,15 @@ class LiveObject extends Entity{
             this.health = this.maxHealth;
         }
         // console.info('Life health changed! ' + this.health);
+
+        //log
+        // fightState.addLog(this.name+'受到了'+damage+'点伤害');
     }
 
-    damageFrom(pysicDamage,magicDamage){
+    damageFrom(pysicDamage,magicDamage,realDamage){
         pysicDamage = pysicDamage || 0;
         magicDamage = magicDamage || 0;
+        realDamage = realDamage || 0;
         if (pysicDamage > 0) {//如果是伤害道具
             pysicDamage = pysicDamage - this.pysicDefense;
             if(pysicDamage < 0)pysicDamage = 0;
@@ -78,8 +82,9 @@ class LiveObject extends Entity{
         }
 
         // console.log('物理伤害结算后'+pysicDamage+' 魔法伤害结算后:'+magicDamage);
-
-        this.healthChange(pysicDamage+magicDamage);
+        var sum = pysicDamage+magicDamage+realDamage;
+        fightState.addLog(this.name+'受到了'+sum+'点伤害');
+        this.healthChange(sum);
     }
 }
 

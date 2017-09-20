@@ -166,8 +166,8 @@ itemShowDialog.aDown = function () {
     if (!selected)return;
     itemShowDialog.setVisible(false);
     myAlertDialog.reOpen('确认?',function cb() {
+        myAlertDialog.bDown();
         selected.confirm(itemShowDialog.currentItem, player, player);
-        currentCustomState = mainState;
     })
 }
 itemShowDialog.bDown = function () {

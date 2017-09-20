@@ -52,6 +52,12 @@ roleDialog.render = function () {
         text = game.add.text(0, 0, '魔防\t' + player.magicDefense, style);
         text.setTextBounds(0, 5 * padding, 250, padding);
         showUICorrect(text);
+        text = game.add.text(0, 0, '速度\t' + player.speed, style);
+        text.setTextBounds(0, 6 * padding, 250, padding);
+        showUICorrect(text);
+        text = game.add.text(0, 0, '装备上限\t' + player.equipmentMaxNum, style);
+        text.setTextBounds(0, 7 * padding, 250, padding);
+        showUICorrect(text);
     })();
 
     (function updateEquipments() {
@@ -197,7 +203,7 @@ equipShowDialog.goUp = function () {
     equipShowDialog.render();
 }
 equipShowDialog.aDown = function () {
-    console.info('seleted item is:'+equipShowDialog.getSelectedItem().name);
+    // console.info('seleted item is:'+equipShowDialog.getSelectedItem().name);
     var selected = equipShowDialog.getSelectedItem();
     if (!selected)return;
     selected.confirm(equipShowDialog.currentItem,player,player);

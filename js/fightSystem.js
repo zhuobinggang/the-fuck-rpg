@@ -14,12 +14,15 @@ fightState.init = function () {
 
     //选择窗初始化
     fightState.selectWindow.group = game.add.group();
+    fightState.selectWindow.list = [];
     fightState.selectWindow.list.push({
         name: '观察敌人', aDown: function () {
             //观察敌人只弹窗就算了
             fightState.setVisible(false);
             selectEnemyDialog.reOpen(fightState.enemies, fightState, function cb(selectedItem) {
-                var message = "名称:" + selectedItem.name + "\n物理抗性:"+selectedItem.pysicDefense+
+                var message = "名称:" + selectedItem.name +
+                        "\n"+ selectedItem.desc
+                    + "\n物理抗性:"+selectedItem.pysicDefense+
                     "\n魔法抗性:"+selectedItem.magicDefense;
                 myAlertDialog.reOpen(message, function () {
                     selectEnemyDialog.setVisible(true);
@@ -74,6 +77,7 @@ fightState.escape = function () {
 fightState.reOpen = function (enemies, lastState) {
     fightState.enemies = enemies || [];
     fightState.lastState = lastState || mainState;
+    fightState.turnNum = 0;//回合数
 
 
     //清空log
@@ -222,7 +226,8 @@ fightState.bDown = function () {
 }
 
 fightState.newTurnStart = function () {
-    this.addLog('------回合开始------');
+    this.turnNum++;
+    this.addLog('------回合'+this.turnNum+'开始------');
 
     this.enemyFight(this.fastThanPlayer);//先手怪物
 
@@ -264,7 +269,7 @@ fightState.playerTurnOver = function () {
         return;
     }
 
-    this.addLog('------回合结束------');
+    // this.addLog('-------回合结束-------');
 
 
     this.newTurnStart();

@@ -105,17 +105,24 @@ class ListBox {
 /**9.13 消息弹窗类**/
 var myAlertDialog = new CustomState('消息弹窗');
 myAlertDialog.group = null;
-myAlertDialog.init = function () {
-    myAlertDialog.group = game.add.group();
-    myAlertDialog.group.visible = false;
-}
-myAlertDialog.reOpen = function (msg, cb ,style, exitState) {
-    this.style = style || {
+myAlertDialog.warnFont = {
+        font: "bold 32px Arial",
+        fill: "#FF3030",
+        boundsAlignH: "center",
+        boundsAlignV: "middle"
+    };
+myAlertDialog.successFont = {
         font: "bold 32px Arial",
         fill: "#4EEE94",
         boundsAlignH: "center",
         boundsAlignV: "middle"
     };
+myAlertDialog.init = function () {
+    myAlertDialog.group = game.add.group();
+    myAlertDialog.group.visible = false;
+}
+myAlertDialog.reOpen = function (msg, cb ,style, exitState) {
+    this.style = style || this.successFont;
     this.exitState = exitState || mainState;
 
     currentCustomState = myAlertDialog;

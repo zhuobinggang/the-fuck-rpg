@@ -266,8 +266,8 @@ skillDialog.aDown = function () {
     if (!selectedItem)return;
 
     function cb(selectedEnemy) {
-        selectedEnemy.effectFromSkill(selectedItem, player);
         fightState.addLog(player.name + '对' + selectedEnemy.name + '释放了:' + selectedItem.name);
+        selectedEnemy.effectFromSkill(selectedItem, player);
 
         //state change
         currentCustomState = fightState;

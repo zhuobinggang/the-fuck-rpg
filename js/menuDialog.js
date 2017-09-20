@@ -8,8 +8,10 @@ menuDialog.init = function () {
     menuDialog.textGroup = game.add.group();
     menuDialog.textGroup.visible = false;
 
+    menuDialog.list = [];
     menuDialog.list.push(roleDialog.getMenuItem());
     menuDialog.list.push(itemDialog.getMenuItem());
+    menuDialog.list.push(operItems.save);
 
     menuDialog.thePointer = 0;
     menuDialog.displayListStart = 0;
