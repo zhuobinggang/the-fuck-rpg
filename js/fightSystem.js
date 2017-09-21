@@ -21,9 +21,9 @@ fightState.init = function () {
             fightState.setVisible(false);
             selectEnemyDialog.reOpen(fightState.enemies, fightState, function cb(selectedItem) {
                 var message = "名称:" + selectedItem.name +
-                        "\n"+ selectedItem.desc
-                    + "\n物理抗性:"+selectedItem.pysicDefense+
-                    "\n魔法抗性:"+selectedItem.magicDefense;
+                    "\n" + selectedItem.desc
+                    + "\n物理抗性:" + selectedItem.pysicDefense +
+                    "\n魔法抗性:" + selectedItem.magicDefense;
                 myAlertDialog.reOpen(message, function () {
                     selectEnemyDialog.setVisible(true);
                     currentCustomState = selectEnemyDialog;
@@ -148,8 +148,8 @@ fightState.renderLogWindow = function () {
 
     var style = {font: "bold 14px Arial", fill: "#9AFF9A", boundsAlignH: "left", boundsAlignV: "middle"};
 
-    var logStart = fightState.fightLog.length-8;
-    if(logStart<0)logStart = 0;
+    var logStart = fightState.fightLog.length - 8;
+    if (logStart < 0) logStart = 0;
     var logList = fightState.fightLog.slice(logStart, fightState.fightLog.length);
     //渲染记录
     (function renderMonsterList() {
@@ -227,7 +227,7 @@ fightState.bDown = function () {
 
 fightState.newTurnStart = function () {
     this.turnNum++;
-    this.addLog('------回合'+this.turnNum+'开始------');
+    this.addLog('------回合' + this.turnNum + '开始------');
 
     this.enemyFight(this.fastThanPlayer);//先手怪物
 
@@ -239,7 +239,7 @@ fightState.newTurnStart = function () {
         mainState.gameReset();
         myAlertDialog.reOpen('你死了', function () {
             myAlertDialog.bDown();
-        }, null,mainState);
+        }, null, mainState);
     }
 }
 
@@ -256,7 +256,6 @@ fightState.playerTurnOver = function () {
     this.enemyFight(this.slowThanPlayer);
     this.renderFightWindow();
     this.renderLogWindow();
-
 
 
     if (player.health < 1) {
@@ -291,12 +290,13 @@ fightState.checkFightOver = function () {
     //掉落道具
     var itemsLog = '获得道具:';
     for (var i = items.length - 1; i >= 0; i--) {
-        itemsLog = itemsLog + items[i].name + ',';
+        itemsLog = itemsLog + items[i].name + ' ';
         player.getItem(items[i]);
     }
 
     this.close();
-    myAlertDialog.reOpen('获得经验:' + exp + '\n' + itemsLog, function () {
+    // myAlertDialog.reOpen('获得经验:' + exp + '\n' + itemsLog, function () {
+    myAlertDialog.reOpen(itemsLog, function () {
         myAlertDialog.bDown();
     }, null, mainState);
 

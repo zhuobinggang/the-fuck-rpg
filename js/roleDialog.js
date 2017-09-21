@@ -3,6 +3,7 @@
  */
 var roleDialog = new ListBox(5);
 roleDialog.group = null;
+roleDialog.font = {font: "bold 22px Arial", fill: "#FFFFFF", boundsAlignH: "left", boundsAlignV: "middle"};
 roleDialog.init = function () {
     roleDialog.group = game.add.group();
     // roleDialog.list.push(Items.stick,Items.egg);
@@ -24,7 +25,8 @@ roleDialog.reOpen = function () {
     roleDialog.render();
 }
 roleDialog.render = function () {
-    var style = menuDialog.font;
+    // var style = menuDialog.font;
+    var style = this.font;
     roleDialog.group.removeAll(true);
 
     function showUICorrect(ui) {
@@ -57,6 +59,9 @@ roleDialog.render = function () {
         showUICorrect(text);
         text = game.add.text(0, 0, '装备上限\t' + player.equipmentMaxNum, style);
         text.setTextBounds(0, 7 * padding, 250, padding);
+        showUICorrect(text);
+        text = game.add.text(0, 0, '携带金钱\t' + player.money, style);
+        text.setTextBounds(0, 8 * padding, 250, padding);
         showUICorrect(text);
     })();
 

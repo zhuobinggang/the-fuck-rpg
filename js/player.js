@@ -2,13 +2,6 @@
  * Created by zhuo on 2017/9/17.
  */
 function playerInteractiveInit() {
-
-    // player.itemList = [{item: Items.egg, num: 1}, {item: Items.stick, num: 1}];
-    // // player.itemList = [Items.egg, Items.stick];
-    // player.equipmentList = [];
-    // player.equipmentMaxNum = 5;//最多五件装备
-    // player.skills = [Skills.normalMagicAttack, Skills.normalPysicAttack];
-
     player.effectFrom = function (item, src) {
         //使用后删除
         if (src) {
@@ -63,6 +56,13 @@ function playerInteractiveInit() {
         player.pysicDefense += pysicDefense;
         player.magicDefense += magicDefense;
 
+        //增加技能
+        if (item.skills) {
+            for (var i = 0; i < item.skills.length; i++) {
+                player.skills.push(item.skills[i]);
+            }
+        }
+
         return true;
     }
     player.getItem = function (item, src) {
@@ -76,7 +76,7 @@ function playerInteractiveInit() {
                 return;
             }
         }
-        player.itemList.push({num:1,item:item});
+        player.itemList.push({num: 1, item: item});
     }
     player.healthChange = function (damage) {
         LiveObject.prototype.healthChange.call(this, damage);
@@ -100,6 +100,14 @@ function playerInteractiveInit() {
         //减去属性
         player.subEquipProperty(equipment);
 
+        //删除技能
+        if (equipment.skills) {
+            for (var i = 0; i < equipment.skills.length; i++) {
+                player.subSkill(equipment.skills[i]);
+            }
+        }
+
+
         //扔回道具栏
         player.equipmentList.splice(index, 1);
         // player.itemList.push(equipment);
@@ -117,7 +125,7 @@ function playerInteractiveInit() {
             if (itemObj.item == item) {
                 itemObj.num = itemObj.num - 1;
                 if (itemObj.num <= 0) {
-                    player.itemList.splice(i,1);
+                    player.itemList.splice(i, 1);
                 }
                 return;
             }
@@ -137,6 +145,16 @@ function playerInteractiveInit() {
 
     player.getSkills = function () {
         return player.skills;
+    }
+
+    player.subSkill = function (skill) {
+        for (var i = player.skills.length - 1; i >= 0; i--) {
+            if (player.skills[i] == skill) {
+                player.skills.splice(i, 1);
+                return true;
+            }
+        }
+        return false;
     }
 }
 
@@ -198,7 +216,4 @@ function initPlayer() {
 
     //道具使用初始化
     playerInteractiveInit();
-
-    //目标对象
-    player.target = player;//初始目标对象是自己
 }

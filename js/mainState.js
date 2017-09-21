@@ -8,6 +8,9 @@ var mainState = {//the main dialog & the game
         game.load.image('tiles1', './js/assets/west_rpg.png');
         game.load.image('tiles2', './js/assets/the_man_set.png');
 
+        game.load.tilemap('shop_map', './js/assets/home.json', null, Phaser.Tilemap.TILED_JSON);
+        game.load.image('poke_out', './js/assets/poke_out.png');
+
         game.load.spritesheet('GM', './js/assets/the_man_set.png', 32, 32);
     },
     create: function () {
@@ -17,7 +20,7 @@ var mainState = {//the main dialog & the game
         initPlayer();
 
         //加载存档,地图初始化
-        loadArchives();
+        MyAchiveManager.loadArchives();
 
         currentCustomState = mainState;
 
@@ -99,108 +102,26 @@ var mainState = {//the main dialog & the game
         game.state.restart(true);
         //地图重置
         // map.reset();
+    },
+    update: function () {
+        current_cold_down_time--;
+        if (current_cold_down_time > 0)return;
+
+        if (game.input.keyboard.isDown(Phaser.Keyboard.A)) {
+            currentCustomState.goLeft();
+        } else if (game.input.keyboard.isDown(Phaser.Keyboard.D)) {
+            // console.log('D down');
+            currentCustomState.goRight();
+        } else if (game.input.keyboard.isDown(Phaser.Keyboard.W)) {
+            currentCustomState.goUp();
+        } else if (game.input.keyboard.isDown(Phaser.Keyboard.S)) {
+            currentCustomState.goDown();
+        } else if (game.input.keyboard.isDown(Phaser.Keyboard.J)) {
+            currentCustomState.aDown();
+        } else if (game.input.keyboard.isDown(Phaser.Keyboard.K)) {
+            currentCustomState.bDown();
+        } else return;
+
+        current_cold_down_time = oper_cold_down_time;
     }
-}
-//加载存档
-loadArchives = function () {
-
-    var saveMap = localStorage.getItem('map');
-    if (!saveMap) {
-        Maps['plain1'].init();
-    } else {
-        Maps[saveMap.name].init();
-    }
-    map.getPlayerTile();
-
-    var playerMetaData = JSON.parse(localStorage.getItem('player'));
-    if (!playerMetaData) {
-        // mainState.initPlayer();
-        player.itemList = [{item: Items.egg, num: 1}, {item: Items.stick, num: 1}];
-        // player.itemList = [Items.egg, Items.stick];
-        player.equipmentList = [];
-        player.equipmentMaxNum = 5;//最多五件装备
-        player.skills = [Skills.normalMagicAttack, Skills.normalPysicAttack];
-    } else {
-        player.health = playerMetaData.health;
-        player.maxHealth = playerMetaData.maxHealth;
-        player.pysicPower = playerMetaData.pysicPower;
-        player.magicPower = playerMetaData.magicPower;
-        player.pysicDefense = playerMetaData.pysicDefense;
-        player.magicDefense = playerMetaData.magicDefense;
-        player.speed = playerMetaData.speed;
-        player.equipmentMaxNum = playerMetaData.equipmentMaxNum;
-
-        // player.itemList = [{item: Items.egg, num: 1}, {item: Items.stick, num: 1}];
-        //load items
-        var itemList = playerMetaData.itemList;
-        player.itemList = [];
-        for(var i = itemList.length-1;i>=0;i--){
-            var item = itemList[i];
-            var itemOfItem = getItemById(item.order);
-            player.itemList.push({
-                num: item.num,
-                item: itemOfItem
-            })
-        }
-
-        var equips = playerMetaData.equipmentList;
-        player.equipmentList = [];
-        for(var i = equips.length-1;i>=0;i--){
-            var equipId = equips[i].order;
-            var equip = getItemById(equipId);
-            player.equipmentList.push(equip);
-        }
-
-        // player.equipmentList = [];
-        // player.skills = [Skills.normalMagicAttack, Skills.normalPysicAttack];
-        var skills = playerMetaData.skills;
-        player.skills = [];
-        for(var i = skills.length-1;i>=0;i--){
-            var skillId = skills[i].order;
-            var skill = getSkillById(skillId);
-            player.skills.push(skill);
-        }
-
-        console.info('读取成功');
-    }
-}
-
-function saveGame() {
-    var playerMetaData = {};
-    playerMetaData.health = player.health;
-    playerMetaData.maxHealth = player.maxHealth;
-    playerMetaData.pysicPower = player.pysicPower;
-    playerMetaData.magicPower = player.magicPower;
-    playerMetaData.pysicDefense = player.pysicDefense;
-    playerMetaData.magicDefense = player.magicDefense;
-    playerMetaData.speed = player.speed;
-    playerMetaData.equipmentMaxNum = player.equipmentMaxNum;
-
-    playerMetaData.skills = [];
-    //储存技能编号
-    for (var i = player.skills.length - 1; i >= 0; i--) {
-        playerMetaData.skills.push({
-            order: player.skills[i].order
-        });
-    }
-
-    playerMetaData.itemList = [];
-    for (var i = player.itemList.length - 1; i >= 0; i--) {
-        var item = player.itemList[i];
-        playerMetaData.itemList.push({
-            num: item.num,
-            order: item.item.order
-        });
-    }
-
-    playerMetaData.equipmentList = [];
-    for (var i = player.equipmentList.length - 1; i >= 0; i--) {
-        var item = player.equipmentList[i];
-        playerMetaData.equipmentList.push({
-            order: item.order
-        });
-    }
-
-    // console.info(JSON.stringify(playerMetaData));
-    localStorage.setItem('player', JSON.stringify(playerMetaData));
 }

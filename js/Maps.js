@@ -27,8 +27,21 @@ Map.prototype.initObjsTileMap = function (numMap, height, width, cb) {
 
 var Maps = {
     plain1: new Map('plain1', stonesMap.plain1, {x: 2, y: 0}),
-    home1: null,
+    shop: new Map('shop', stonesMap.shop, {x:2, y:2}),
+    mapInfo: {
+        currentFloor: null,
+        plain1: {
+            item1BeUsed: false,//OSU是否被拿走
+            bossKilledFlag: false,
+        }
+    }//储存的地图信息
 }
+Maps.changeMap = function(name){
+    map.destroy();
+    map = Maps[name];
+    map.init();
+}
+
 Maps.plain1.init = function () {
     //init obj map
     this.initObjsTileMap(this.stoneMap);
@@ -51,6 +64,13 @@ Maps.plain1.init = function () {
 
     //resize world
     map.resizeWorld();
+
+    //加载玩家砖块
+    map.initPlayerTile();
+
+    //根据储存的地图信息来重置某些特性:比如只能刷一次的怪
+    Maps.mapInfo.currentFloor = 'plain1';
+    this.resetByArchive(Maps.mapInfo);
 }
 Maps.plain1.reOpen = function () {
     currentCustomState = mainState;
@@ -62,23 +82,18 @@ Maps.plain1.close = function () {
 Maps.plain1.render = function () {
 
 }
-Maps.plain1.getPlayerTile = function () {
+Maps.plain1.initPlayerTile = function () {
+    //玩家出现位置
     var x = this.playerPosition.x;
     var y = this.playerPosition.y;
     var tile = this.map.getTile(x, y);
+
+    //加载玩家图片
     var texture = game.add.image(tile.worldX, tile.worldY, 'GM', 1);
-    // this.layer_lives.addChild(texture);
     this.layer_lives.removeAll(true);
     this.layer_lives.add(texture);
-    // return {
-    //     x: x,
-    //     y: y,
-    //     texture: texture,
-    //     changeFrame: function (frame) {
-    //         player.tile.texture.frame = frame;
-    //     }
-    // };
-    //初始化玩家图片
+
+    //初始化玩家tile属性
     player.tile = {
         x: x,
         y: y,
@@ -101,40 +116,56 @@ Maps.plain1.initObjsTileMap = function (stoneMap) {
             result = Maps.plain1.getDeepGlassTileObj(result);
         } else if (num == 0) {//浅草地
             result = Maps.plain1.getGlassTileObj(result);
-        } else if (num == 10){//石碑1
+        } else if (num == 10) {//石碑1
             result.isStone = true;
             //读取石碑内容
             result.beInterestedCallback = function () {
-                var message = 'Sword Eat Online 第一层\n\n'+'主要掉落物: \n'+
-                        '苹果,木剑,神之手,FaQ\n'+'Tips:深草区是刷怪地点\n'+'打倒Boss进入第二层!';
-                myAlertDialog.reOpen(message,function () {
+                var message = 'Sword Eat Online 第一层\n\n' + '主要掉落物: \n' +
+                    '苹果,木剑,神之手,FaQ\n' + 'Tips:深草区是刷怪地点\n' + '打倒Boss进入第二层!';
+                myAlertDialog.reOpen(message, function () {
                     myAlertDialog.bDown();
-                },null,mainState);
+                }, null, mainState);
             }
-        } else if (num == 11){//植物
+        } else if (num == 11) {//植物
             result.isStone = true;
             result.beInterestedCallback = function () {
-                var message = '爸爸送你一把神器\n'+'按A说谢谢爸爸\n'+
-                        '按B拒绝\n'+'温馨提示:机会只有一次';
-                myAlertDialog.reOpen(message,function () {
+                var message = '爸爸送你一把神器\n' + '按A说谢谢爸爸\n' +
+                    '按B拒绝\n' + '温馨提示:机会只有一次';
+                myAlertDialog.reOpen(message, function () {
                     player.getItem(Items.OSUPlayer);
                     //清除这个效果
                     result.beInterestedCallback = function () {
-                        myAlertDialog.reOpen('还想拿?QQ问爸爸要',function () {
+                        myAlertDialog.reOpen('还想拿?QQ问爸爸要', function () {
                             myAlertDialog.bDown();
-                        },null,mainState);
+                        }, null, mainState);
                     }
+                    //设置储存flag
+                    Maps.mapInfo.plain1.item1BeUsed = true;
+                    //关闭弹窗
                     myAlertDialog.bDown();
-                },null,mainState);
+                }, null, mainState);
             }
-        } else if (num == 12){//植物
+        } else if (num == 12) {//植物
             result.isStone = true;
             result.beInterestedCallback = function () {
-                var message = '看起来像是Boss的样子\n'+'按A进入战斗\n'+
-                        '按B跑路\n';
-                myAlertDialog.reOpen(message,function () {
-                    fightState.reOpen([Object.create(Monsters.bossOfOne)],mainState);
-                },null,mainState);
+                var message = '看起来像是Boss的样子\n' + '按A进入战斗\n' +
+                    '按B跑路\n';
+                myAlertDialog.reOpen(message, function () {
+                    var boss = Object.create(Monsters.bossOfOne);
+                    boss.itemList = [Items.deathKiller];
+
+                    fightState.reOpen([Object.create(Monsters.bossOfOne)], mainState);
+                }, null, mainState);
+            }
+        } else if(num == 14){//楼梯
+            result.isStone = true;
+            result.beInterestedCallback = function () {
+                var message = '进入下一层?'
+                myAlertDialog.reOpen(message, function () {
+                    Maps.changeMap('home');
+
+                    myAlertDialog.bDown();
+                }, null, mainState);
             }
         }
         return result;
@@ -220,12 +251,12 @@ Maps.plain1.setVisible = function (visible) {
     this.layer_lava.visible = visible;
     this.layer_objs.visible = visible;
 }
-Maps.plain1.playerInterestOn = function (x,y) {
+Maps.plain1.playerInterestOn = function (x, y) {
     var obj = this.obj_tile_map[x][y];
     console.log(JSON.stringify(obj));
-    if(obj.beInterestedCallback){
+    if (obj.beInterestedCallback) {
         obj.beInterestedCallback();
-    }else{
+    } else {
         console.warn('该方块没有事件可以触发');
     }
 }
@@ -241,31 +272,118 @@ Maps.plain1.encounter = function (x, y) {
         currentCustomState = fightState;
 
         // fightState.reOpen([Object.create(Monsters.king),Object.create(Monsters.king2)]);
-        fightState.reOpen(tile.spawnEnemies(),mainState);
-
-        // function cb(item, src) {
-        //     console.log(this.name + '被' + src.name + '使用了' + item.name);
-        // }
-        //
-        // function cb2(skill,src) {
-        //     console.log(this.name + '被' + src.name + '释放了技能' + skill.name);
-        // }
-        //
-        // fightState.reOpen([
-        //     {name: '王FaQ', effectFromInFight: cb,effectFromSkill: cb2,speed: 13,
-        //     fuckPlayer:function () {
-        //         fightState.addLog(this.name+' 对 '+player.name+"使用了普通攻击");
-        //     }},
-        //     {name: '哲学家', effectFromInFight: cb,effectFromSkill: cb2,speed: 2,
-        //     fuckPlayer:function () {
-        //         fightState.addLog(this.name+' 对 '+player.name+"使用了普通攻击");
-        //     }}
-        // ]);
+        fightState.reOpen(tile.spawnEnemies(), mainState);
     }
 }
 Maps.plain1.reset = function () {
     //重置砖块对象
     this.initObjsTileMap(this.stoneMap);
+}
+Maps.plain1.resetByArchive = function (mapInfo) {
+    mapInfo = mapInfo || Maps.mapInfo;
 
-    // this.init();
+    if (!mapInfo.plain1)return;
+
+    var osuUsedFlag = mapInfo.plain1.item1BeUsed;
+    var bossKilledFlag = mapInfo.plain1.bossKilledFlag;
+
+    if (osuUsedFlag) {
+        this.obj_tile_map[11][23].beInterestedCallback = function () {
+            myAlertDialog.reOpen('还想拿?QQ问爸爸要', function () {
+                myAlertDialog.bDown();
+            }, null, mainState);
+        };
+    }
+    if (bossKilledFlag) {
+        var bossTile = this.obj_tile_map[20][21];
+        bossTile.isStone = false;
+        bossTile.beInterestedCallback = null;
+    }
+}
+Maps.plain1.destroy = function () {
+    // this.setVisible(false);
+    this.layer_glass.destroy();
+    this.layer_lava.destroy();
+    this.layer_bridge.destroy();
+    this.layer_lives.destroy();//player in
+    this.layer_objs.destroy();
+    this.map.destroy();
+}
+
+Maps.shop.init = function () {
+    //init obj map
+    this.initObjsTileMap(this.stoneMap);
+
+    this.map = game.add.tilemap('shop_map');
+    this.map.addTilesetImage('poke_out', 'poke_out');
+    this.groundLayer = this.map.createLayer('\u5757\u5c42 1');
+    this.playerLayer = game.add.group();
+    this.objLayer = this.map.createLayer('shade_life');
+
+    //set current map
+    map = this;
+
+    //resize world
+    this.groundLayer.resizeWorld();
+
+    //加载玩家砖块
+    map.initPlayerTile();
+
+    //根据储存的地图信息来重置某些特性:比如只能刷一次的怪
+    Maps.mapInfo.currentFloor = 'shop';
+    this.resetByArchive(Maps.mapInfo);
+}
+Maps.shop.initPlayerTile = function () {
+    console.log('我想要初始化玩家砖块');
+    //玩家出现位置
+    var x = this.playerPosition.x;
+    var y = this.playerPosition.y;
+    var tile = this.map.getTile(x, y);
+
+    //加载玩家图片
+    var texture = game.add.image(tile.worldX, tile.worldY, 'GM', 1);
+    this.playerLayer.removeAll(true);
+    this.playerLayer.add(texture);
+
+    //初始化玩家tile属性
+    player.tile = {
+        x: x,
+        y: y,
+        texture: texture,
+        changeFrame: function (frame) {
+            player.tile.texture.frame = frame;
+        }
+    };
+    player.facing = 3;//0 1 2 3 up down left right
+}
+Maps.shop.resetByArchive = function () {
+    console.log('我想要通过存档改变一些特性');
+}
+Maps.shop.initObjsTileMap = function () {
+    console.log('我想要初始化砖块地图');
+    var obj_tile_map = Map.prototype.initObjsTileMap.call(this, this.stoneMap, 25, 25, function (num) {
+        var result = {isStone: false, encounterChance: 0};
+        if (num == 1) {
+            result.isStone = true;
+        }else if(num == 10){//交易机器
+            //TODO: 选择道具以及数量然后卖出
+        }
+        return result;
+    })
+    this.obj_tile_map = obj_tile_map;
+}
+Maps.shop.playerGoTo = function (offsetX, offsetY) {
+    return Maps.plain1.playerGoTo.call(this,offsetX,offsetY)
+}
+Maps.shop.encounter = function(x,y){}
+Maps.shop.setVisible = function (visible) {
+    this.groundLayer.visible = visible;
+    this.playerLayer.visible = visible;
+    this.objLayer.visible = visible;
+}
+Maps.shop.destroy = function () {
+    this.groundLayer.destroy();
+    this.objLayer.destroy();
+    this.playerLayer.destroy();
+    this.map.destroy();
 }

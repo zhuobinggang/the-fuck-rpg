@@ -42,8 +42,7 @@ var Monsters = {
     king2: new Enemy('会念诗的史莱姆', 20, 3, 9, 3, 3, 14, 10,"不是史莱姆，是会念诗的史莱姆"),
     goblin: new Enemy('哥布林', 10, 3, 3, 3, 3, 2, 2,"普通的哥布林"),
     slime: new Enemy('史莱姆', 10, 3, 3, 3, 3, 2, 2,"普通的史莱姆"),
-    bossOfOne: new Enemy('卡在墙里的死神', 99, 12, 12, 5, 5, 4, 100,"放我出来就实现你一个愿望"),
-    //TODO: 完成boss设计
+    bossOfOne: new Enemy('卡在墙里的死神', 99, 12, 12, 5, 5, 4, 100,"不是死神，是卡在墙里的死神"),
 }
 //第一层
 Monsters.king.fuckPlayer = function () {
@@ -78,5 +77,6 @@ Monsters.bossOfOne.checkDeath = function () {
         var theBossTile = Maps.plain1.obj_tile_map[20][21];
         theBossTile.isStone = false;
         theBossTile.beInterestedCallback = null;
+        Maps.mapInfo.plain1.bossKilledFlag = true;
     }
 }
