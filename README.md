@@ -5,7 +5,7 @@ Browser game. Html5. Phaser. RPG game.
 https://zhuobinggang.github.io/the-fuck-rpg/
 
 ## How to play
-You should have server enviroment like nginx apache and so on.Just do nothing with it.
+键位: WASD JK
 
-Browser the index.html and have fun (may be not fun).
+总之就是一层一层地打上去就对啦
 
