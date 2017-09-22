@@ -54,6 +54,24 @@ var loadState = {
     },
     toNextState: function () {
         game.state.start('title');
+    },
+    goLeft: function () {
+        this.toNextState();
+    },
+    goRight: function () {
+        this.goLeft();
+    },
+    goUp: function () {
+        this.goLeft();
+    },
+    goDown: function () {
+        this.goLeft();
+    },
+    aDown: function () {
+        this.goLeft();
+    },
+    bDown: function () {
+        this.goLeft();
     }
 }
 
@@ -128,5 +146,11 @@ var titleState = {
             localStorage.clear();
             this.toNextState();
         }
+    },
+    goUp: function () {
+    },
+    goDown: function () {
+    },
+    bDown: function () {
     }
 }

@@ -23,6 +23,7 @@ var mainState = {//the main dialog & the game
         //加载存档,地图初始化
         MyAchiveManager.loadArchives();
 
+
         currentCustomState = mainState;
 
 
@@ -84,7 +85,7 @@ var mainState = {//the main dialog & the game
         menuDialog.reOpen();
     },
     fixCameraTo: function (x, y) {
-        game.camera.focusOnXY(x, y);
+        // game.camera.focusOnXY(x, y);
     },
     reOpen: function () {
         map.reOpen();

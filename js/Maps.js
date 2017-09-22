@@ -72,6 +72,9 @@ Maps.plain1.init = function (playerPosition) {
     //加载玩家砖块
     map.initPlayerTile();
 
+    //fix camera
+    game.camera.follow(player.tile.texture);
+
     //根据储存的地图信息来重置某些特性:比如只能刷一次的怪
     Maps.mapInfo.currentFloor = 'plain1';
     this.resetByArchive(Maps.mapInfo);
@@ -256,8 +259,11 @@ Maps.plain1.playerGoTo = function (offsetX, offsetY) {
     var nextTile = this.map.getTile(nextX, nextY);
 
     //加入动画效果，不能一步到位
-    player.tile.texture.x = nextTile.worldX;
-    player.tile.texture.y = nextTile.worldY;
+    // player.tile.texture.x = nextTile.worldX;
+    // player.tile.texture.y = nextTile.worldY;
+    var tween = game.add.tween(player.tile.texture);
+    tween.to({x: nextTile.worldX,y:nextTile.worldY},100)
+    tween.start();
 
     //encounter enemies
     this.encounter(nextX, nextY);
@@ -348,6 +354,9 @@ Maps.shop.init = function () {
 
     //加载玩家砖块
     map.initPlayerTile();
+
+    //fix camera
+    game.camera.follow(player.tile.texture);
 
     //根据储存的地图信息来重置某些特性:比如只能刷一次的怪
     Maps.mapInfo.currentFloor = 'shop';
