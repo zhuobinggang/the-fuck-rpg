@@ -39,7 +39,7 @@ itemDialog.render = function () {
 
     var barY = (itemDialog.thePointer - itemDialog.displayListStart) * 62;
     var bar = game.add.graphics();
-    bar.beginFill(0x000000, 0.2);
+    bar.beginFill(0xB3EE3A, 0.2);
     bar.drawRect(50, barY, 400, 62);
     bar.fixedToCamera = true;
     itemDialog.group.add(bar);

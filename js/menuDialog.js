@@ -43,8 +43,9 @@ menuDialog.render = function () {
 };
 
 menuDialog.reOpen = function () {
-    menuDialog.render();
+    currentCustomState = this;
     menuDialog.setVisible(true);
+    menuDialog.render();
 };
 menuDialog.setVisible = function (visible) {
     menuDialog.textGroup.visible = visible;
@@ -71,5 +72,6 @@ menuDialog.bDown = function () {
 };
 menuDialog.dialogClose = function () {
     menuDialog.setVisible(false);
+    mainState.setVisible(true);
     currentCustomState = mainState;
 };

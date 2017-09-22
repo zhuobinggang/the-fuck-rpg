@@ -4,20 +4,21 @@
 var mainState = {//the main dialog & the game
     preload: function () {
         console.log('call::preload()');
-        game.load.tilemap('tile_map', './js/assets/fuck.json', null, Phaser.Tilemap.TILED_JSON);
-        game.load.image('tiles1', './js/assets/west_rpg.png');
-        game.load.image('tiles2', './js/assets/the_man_set.png');
-
-        game.load.tilemap('shop_map', './js/assets/home.json', null, Phaser.Tilemap.TILED_JSON);
-        game.load.image('poke_out', './js/assets/poke_out.png');
-
-        game.load.spritesheet('GM', './js/assets/the_man_set.png', 32, 32);
+        // game.load.tilemap('tile_map', './js/assets/fuck.json', null, Phaser.Tilemap.TILED_JSON);
+        // game.load.image('tiles1', './js/assets/west_rpg.png');
+        // game.load.image('tiles2', './js/assets/the_man_set.png');
+        //
+        // game.load.tilemap('shop_map', './js/assets/home.json', null, Phaser.Tilemap.TILED_JSON);
+        // game.load.image('poke_out', './js/assets/poke_out.png');
+        //
+        // game.load.spritesheet('GM', './js/assets/the_man_set.png', 32, 32);
     },
     create: function () {
         console.log('call::create()');
 
         //初始化玩家函数之类的
         initPlayer();
+
 
         //加载存档,地图初始化
         MyAchiveManager.loadArchives();

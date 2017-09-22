@@ -76,7 +76,7 @@ roleDialog.render = function () {
 
     var barY = (roleDialog.thePointer - roleDialog.displayListStart) * 100;
     var bar = game.add.graphics();
-    bar.beginFill(0x000000, 0.2);
+    bar.beginFill(0xE0FFFF, 0.2);
     bar.drawRect(250, barY, 250, 100);
     showUICorrect(bar);
 }
@@ -184,7 +184,7 @@ equipShowDialog.render = function () {
 
     var barY = (equipShowDialog.thePointer - equipShowDialog.displayListStart) * 100;
     var bar = game.add.graphics();
-    bar.beginFill(0x000000, 0.2);
+    bar.beginFill(0x836FFF, 0.2);
     bar.drawRect(250, barY, 250, 100);
     showUICorrect(bar);
 }

@@ -27,7 +27,7 @@ Map.prototype.initObjsTileMap = function (numMap, height, width, cb) {
 
 var Maps = {
     plain1: new Map('plain1', stonesMap.plain1, {x: 2, y: 0}),
-    shop: new Map('shop', stonesMap.shop, {x:2, y:2}),
+    shop: new Map('shop', stonesMap.shop, {x: 2, y: 2}),
     mapInfo: {
         currentFloor: null,
         plain1: {
@@ -36,13 +36,15 @@ var Maps = {
         }
     }//储存的地图信息
 }
-Maps.changeMap = function(name){
+Maps.changeMap = function (name) {
     map.destroy();
     map = Maps[name];
     map.init();
+
+    player.fixCamera();
 }
 
-Maps.plain1.init = function () {
+Maps.plain1.init = function (playerPosition) {
     //init obj map
     this.initObjsTileMap(this.stoneMap);
 
@@ -65,6 +67,8 @@ Maps.plain1.init = function () {
     //resize world
     map.resizeWorld();
 
+
+    this.playerPosition = playerPosition || this.playerPosition;
     //加载玩家砖块
     map.initPlayerTile();
 
@@ -152,17 +156,17 @@ Maps.plain1.initObjsTileMap = function (stoneMap) {
                     '按B跑路\n';
                 myAlertDialog.reOpen(message, function () {
                     var boss = Object.create(Monsters.bossOfOne);
-                    boss.itemList = [Items.deathKiller];
+                    boss.items = [Items.deathKiller];
 
-                    fightState.reOpen([Object.create(Monsters.bossOfOne)], mainState);
+                    fightState.reOpen([boss], mainState);
                 }, null, mainState);
             }
-        } else if(num == 14){//楼梯
+        } else if (num == 14) {//楼梯
             result.isStone = true;
             result.beInterestedCallback = function () {
                 var message = '进入下一层?'
                 myAlertDialog.reOpen(message, function () {
-                    Maps.changeMap('home');
+                    Maps.changeMap('shop');
 
                     myAlertDialog.bDown();
                 }, null, mainState);
@@ -207,19 +211,33 @@ Maps.plain1.getDeepGlassTileObj = function (result) {
 }
 Maps.plain1.getGlassTileObj = function (result) {
     result.encounterChance = 10;
-    result.spawnEnemies = function () {
+
+    //返回一只随机怪物
+    function getRandomMonster() {
         var seed = Math.floor(Math.random() * 2);
         if (seed == 0) {//0 的时候刷史莱姆
             var slime = Object.create(Monsters.slime);
             //算装备掉落率
             slime.items = [Items.apple];
-            return [slime];
+            return slime;
         } else {
             var goblin = Object.create(Monsters.goblin);
             goblin.items = [Items.stick];
-            return [goblin];
+            return goblin;
         }
     }
+
+    //要先计算概率，然后调用
+    result.spawnEnemies = function () {
+        //计算刷几只
+        var seed = Math.floor(Math.random() * 3);
+        var monsters = [];
+        while(seed -- > -1){
+            monsters.push(getRandomMonster());
+        }
+        return monsters;
+    }
+
     return result;
 }
 Maps.plain1.playerGoTo = function (offsetX, offsetY) {
@@ -236,6 +254,8 @@ Maps.plain1.playerGoTo = function (offsetX, offsetY) {
     player.tile.x = nextX;
     player.tile.y = nextY;
     var nextTile = this.map.getTile(nextX, nextY);
+
+    //加入动画效果，不能一步到位
     player.tile.texture.x = nextTile.worldX;
     player.tile.texture.y = nextTile.worldY;
 
@@ -365,17 +385,49 @@ Maps.shop.initObjsTileMap = function () {
         var result = {isStone: false, encounterChance: 0};
         if (num == 1) {
             result.isStone = true;
-        }else if(num == 10){//交易机器
-            //TODO: 选择道具以及数量然后卖出
+        } else if (num == 10) {//交易机器
+            result.isStone = true;
+            result.beInterestedCallback = function () {
+                Maps.shop.setVisible(false);
+                purchaseDialog.reOpen();
+            }
+        }else if (num == 11) {//买道具
+            result.isStone = true;
+            result.beInterestedCallback = function () {
+                myAlertDialog.reOpen('商店的电脑好像坏掉了\n\n(其实是这部分的代码没写好...)');
+            }
+        }else if (num == 2) {//黑板
+            result.isStone = true;
+            result.beInterestedCallback = function () {
+                myAlertDialog.reOpen('黑板上写着:\n啥也别说了,卢本伟牛逼!');
+            }
+        }else if (num == 14) {//楼梯
+            result.isStone = true;
+            result.beInterestedCallback = function () {
+                myAlertDialog.reOpen('第三层施工中...');
+            }
+        } else if (num == 13) {//楼梯
+            result.isStone = true;
+            result.beInterestedCallback = function () {
+                myAlertDialog.reOpen('确定返回第一层吗?',function () {
+                    Maps.plain1.playerPosition = {x:22,y:24}
+                    Maps.changeMap('plain1');
+                    myAlertDialog.bDown();
+                });
+            }
         }
         return result;
     })
     this.obj_tile_map = obj_tile_map;
 }
 Maps.shop.playerGoTo = function (offsetX, offsetY) {
-    return Maps.plain1.playerGoTo.call(this,offsetX,offsetY)
+    return Maps.plain1.playerGoTo.call(this, offsetX, offsetY)
 }
-Maps.shop.encounter = function(x,y){}
+Maps.shop.encounter = function (x, y) {
+}
+Maps.shop.playerInterestOn = function (x, y) {
+    Maps.plain1.playerInterestOn.call(this,x,y);
+}
 Maps.shop.setVisible = function (visible) {
     this.groundLayer.visible = visible;
     this.playerLayer.visible = visible;

@@ -76,7 +76,11 @@ Monsters.bossOfOne.checkDeath = function () {
     if (!this.isLiving) {
         var theBossTile = Maps.plain1.obj_tile_map[20][21];
         theBossTile.isStone = false;
-        theBossTile.beInterestedCallback = null;
+        theBossTile.beInterestedCallback = function () {
+            myAlertDialog.reOpen('现在你可以通过这里',function () {
+                myAlertDialog.bDown();
+            });
+        };
         Maps.mapInfo.plain1.bossKilledFlag = true;
     }
 }

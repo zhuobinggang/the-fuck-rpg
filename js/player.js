@@ -113,17 +113,17 @@ function playerInteractiveInit() {
         // player.itemList.push(equipment);
         player.getItem(equipment);
     }
-    player.discardItem = function (item, src) {
-        // var index = player.itemList.indexOf(item);
-        // if (index >= 0) player.itemList.splice(index, 1);
-        // else {
-        //     console.warn("没有这件道具");
-        //     return;
-        // }
+    player.discardItem = function (item, src ,num) {
+        if(num == 0){
+            num = 0;
+        }else{
+            if(! num)num = 1;
+        }
+
         for (var i = player.itemList.length - 1; i >= 0; i--) {
             var itemObj = player.itemList[i];
             if (itemObj.item == item) {
-                itemObj.num = itemObj.num - 1;
+                itemObj.num = itemObj.num - num;
                 if (itemObj.num <= 0) {
                     player.itemList.splice(i, 1);
                 }
@@ -187,7 +187,10 @@ function initPlayer() {
 
     }
     player.bDown = function () {
-        currentCustomState = menuDialog;
+        // currentCustomState = menuDialog;
+        console.log('打开菜单');
+        currentCustomState.setVisible(false);
+        menuDialog.reOpen();
     }
 
     player.goDown = function () {

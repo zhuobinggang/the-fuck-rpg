@@ -66,7 +66,7 @@ class Skill {
         this.skillType = skillType || 1;//1 2 3,物理，魔法，或者都有
         this.pysicDamageUp = pysicDamageUp || 0.0;
         this.magicDamageUp = magicDamageUp || 0.0;
-        this.realDamage = realDamage || -1;
+        this.realDamage = realDamage || 1;
 
         //计数
         Skill.num++;
@@ -94,8 +94,8 @@ class Skill {
 Skill.num = 0;
 var Skills = {
     normalPysicAttack: new Skill(),
-    normalMagicAttack: new Skill('普通魔法攻击', '很普通的魔法攻击', 2, 0.0, 0.0, -1),
-    frameDeathChop: new Skill('烈焰死亡镰刃', '很普通的烈焰死亡镰刃攻击', 3, 0.0, 0.0, -5)
+    normalMagicAttack: new Skill('普通魔法攻击', '很普通的魔法攻击', 2, 0.0, 0.0, 1),
+    frameDeathChop: new Skill('烈焰死亡镰刃', '很普通的烈焰死亡镰刃攻击', 3, 0.0, 0.0, 5)
 }
 
 
