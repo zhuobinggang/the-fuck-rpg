@@ -6,13 +6,16 @@ var itemDialog = new ListBox(8);
 itemDialog.group = null;
 itemDialog.lastState = null;
 itemDialog.init = function () {
-    itemDialog.group = game.add.group();
     // itemDialog.list.push(Items.stick,Items.egg);
     //从用户背包初始化
     // itemDialog.list = player.itemList;
     // itemDialog.displayList = itemDialog.list.slice(itemDialog.thePointer, itemDialog.maxDisplayLength);
 }
 itemDialog.reOpen = function (itemList,lastState) {
+    if(!itemDialog.group){
+        itemDialog.group = game.add.group();
+    }
+
     //复用道具菜单
     itemDialog.list = itemList || player.itemList;
     itemDialog.lastState = lastState || menuDialog;
@@ -20,6 +23,7 @@ itemDialog.reOpen = function (itemList,lastState) {
 
     currentCustomState = itemDialog;
     // lastState.setVisible(false);
+    itemDialog.lastState.setVisible(false);
     itemDialog.setVisible(true);
     itemDialog.render();
 }
@@ -88,12 +92,15 @@ itemShowDialog.group = null;
 itemShowDialog.currentItem = Items.excalibur;
 itemShowDialog.descFont = {font: "bold 22px Arial", fill: "#fff", boundsAlignH: "left", boundsAlignV: "top"};
 itemShowDialog.rightFont = {font: "bold 22px Arial", fill: "#fff", boundsAlignH: "center", boundsAlignV: "middle"};
+itemShowDialog.inited = false;
 
 itemShowDialog.init = function () {
     itemShowDialog.group = game.add.group();
     // itemShowDialog.list = itemShowDialog.currentItem.opers.slice();
     itemShowDialog.list = [operItems.use, operItems.wear, operItems.discard];
     itemShowDialog.displayList = itemShowDialog.list.slice(itemShowDialog.thePointer, itemShowDialog.maxDisplayLength);
+
+    this.inited = true;
 }
 itemShowDialog.reSetItem = function (item) {
     itemShowDialog.currentItem = item || Items.excalibur;
@@ -104,6 +111,10 @@ itemShowDialog.reSetItem = function (item) {
     itemShowDialog.displayList = itemShowDialog.list.slice(itemShowDialog.thePointer, itemShowDialog.maxDisplayLength);
 }
 itemShowDialog.reOpen = function (item) {
+    if(!this.inited){
+        itemShowDialog.init();
+    }
+
     currentCustomState = itemShowDialog;
     itemDialog.setVisible(false);
     itemShowDialog.setVisible(true);

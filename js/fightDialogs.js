@@ -14,6 +14,10 @@ selectEnemyDialog.init = function () {
     selectEnemyDialog.group = game.add.group();
 }
 selectEnemyDialog.reOpen = function (itemList, lastState, cb) {
+    if(!selectEnemyDialog.group){
+        selectEnemyDialog.group = game.add.group();
+    }
+
     selectEnemyDialog.list = itemList || player.itemList;
     selectEnemyDialog.lastState = lastState || fightState;
     selectEnemyDialog.cb = cb || function () {
@@ -25,7 +29,7 @@ selectEnemyDialog.reOpen = function (itemList, lastState, cb) {
     selectEnemyDialog.reset();
 
     currentCustomState = selectEnemyDialog;
-    // lastState.setVisible(false);
+    selectEnemyDialog.lastState.setVisible(false);
     selectEnemyDialog.setVisible(true);
     selectEnemyDialog.render();
 }
@@ -99,9 +103,12 @@ var fightItemDialog = new ListBox(5);
 fightItemDialog.group = null;
 fightItemDialog.lastState = null;
 fightItemDialog.init = function () {
-    fightItemDialog.group = game.add.group();
 }
 fightItemDialog.reOpen = function (itemList, lastState) {
+    if(!this.group){
+        fightItemDialog.group = game.add.group();
+    }
+
     //复用道具菜单
     fightItemDialog.list = itemList || player.getFightItems();
     fightItemDialog.lastState = lastState || fightState;
@@ -109,6 +116,7 @@ fightItemDialog.reOpen = function (itemList, lastState) {
 
     currentCustomState = fightItemDialog;
     // lastState.setVisible(false);
+    fightItemDialog.lastState.setVisible(false);
     fightItemDialog.setVisible(true);
     fightItemDialog.render();
 }
@@ -186,6 +194,7 @@ fightItemDialog.useItemCallBack = function (selectedEnemy) {
 
     //结束该回合
     fightState.playerTurnOver();
+
 }
 fightItemDialog.bDown = function () {
     fightItemDialog.close();
@@ -208,6 +217,7 @@ skillDialog.reOpen = function (skillList, lastState) {
 
     currentCustomState = skillDialog;
     // lastState.setVisible(false);
+    skillDialog.lastState.setVisible(false);
     skillDialog.setVisible(true);
     skillDialog.render();
 }
@@ -275,6 +285,9 @@ skillDialog.aDown = function () {
         fightState.setVisible(true);
         //结束该回合
         fightState.playerTurnOver();
+
+        //播放伤害动画
+        fightState.damageAnimaOn(selectEnemyDialog.thePointer);
     }
 
     //选择怪物窗口

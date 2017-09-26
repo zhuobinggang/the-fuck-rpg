@@ -7,8 +7,11 @@ fightState.enemies = [];
 fightState.fightLog = [];
 fightState.lastState = mainState;//上一个场景
 fightState.selectWindow = new ListBox();
+fightState.inited = false;
+fightState.bgImg = null;
 fightState.init = function () {
     fightState.list = [operItems.checkEnemies, operItems.use, operItems.skill, operItems.escape];
+    fightState.bgGroup = game.add.group();//background image group
     fightState.fightWindowGroup = game.add.group();
     fightState.logWindowGroup = game.add.group();
 
@@ -56,6 +59,15 @@ fightState.init = function () {
         }
     });
     fightState.selectWindow.reset();
+
+    //set bg img
+    this.bgImg = game.add.image(0,0,'mahojin',null,this.bgGroup);
+    this.bgImg.height = 500;
+    this.bgImg.width = 500;
+    this.bgGroup.visible = false;
+    this.bgGroup.fixedToCamera = true;
+
+    this.inited = true;
 }
 
 fightState.escape = function () {
@@ -75,6 +87,10 @@ fightState.escape = function () {
 }
 
 fightState.reOpen = function (enemies, lastState) {
+    if(!fightState.inited){
+        this.init();
+    }
+
     fightState.enemies = enemies || [];
     fightState.lastState = lastState || mainState;
     fightState.turnNum = 0;//回合数
@@ -89,8 +105,9 @@ fightState.reOpen = function (enemies, lastState) {
     this.newTurnStart();//新回合开始
 
     //change state
+    fightState.lastState.setVisible(false);
+    mainState.setVisible(false);
     currentCustomState = fightState;
-    lastState.setVisible(false);
     fightState.setVisible(true);
     fightState.reRender();
 }
@@ -196,6 +213,8 @@ fightState.setVisible = function (visible) {
     fightState.fightWindowGroup.visible = visible;
     fightState.logWindowGroup.visible = visible;
     fightState.selectWindow.group.visible = visible;
+
+    fightState.bgGroup.visible = visible;
 }
 fightState.close = function () {
     //change current custom state
@@ -237,9 +256,6 @@ fightState.newTurnStart = function () {
     if (player.health < 1) {
         this.close();
         mainState.gameReset();
-        myAlertDialog.reOpen('你死了', function () {
-            myAlertDialog.bDown();
-        }, null, mainState);
     }
 }
 
@@ -261,9 +277,9 @@ fightState.playerTurnOver = function () {
     if (player.health < 1) {
         this.close();
         mainState.gameReset();
-        myAlertDialog.reOpen('你死了', function () {
-            myAlertDialog.bDown();
-        }, null, mainState);
+        // myAlertDialog.reOpen('你死了', function () {
+        //     myAlertDialog.bDown();
+        // }, null, mainState);
 
         return;
     }
@@ -330,13 +346,17 @@ fightState.addLog = function (msg) {
     this.fightLog.push({msg: msg});
 }
 
-/**
- * 战斗系统
- */
-var FightSystem = {
+fightState.damageAnimaOn = function (num) {
+    console.log('开始播放动画');
 
-    onPlayerMove: function (test) {
-        // console.info('player moved: '+test);
-
-    }
+    //创建一个短时动画
+    var damageAnima = game.add.sprite(350,50+50*num-10,'damage1',null,fightState.fightWindowGroup);
+    damageAnima.fixedToCamera = true;
+    damageAnima.animations.add('fuck',[1,2,3,4,5]);
+    damageAnima.play('fuck',null,true);
+    damageAnima.height = 60;
+    damageAnima.width = 60;
+    game.time.events.add(Phaser.Timer.HALF * 1, function () {
+        damageAnima.destroy();
+    }, this);
 }

@@ -294,7 +294,7 @@ Maps.plain1.encounter = function (x, y) {
 
     if (rand < tile.encounterChance) {
         //切换场景
-        this.setVisible(false);
+        mainState.setVisible(false);
         currentCustomState = fightState;
 
         // fightState.reOpen([Object.create(Monsters.king),Object.create(Monsters.king2)]);
@@ -403,7 +403,9 @@ Maps.shop.initObjsTileMap = function () {
         }else if (num == 11) {//买道具
             result.isStone = true;
             result.beInterestedCallback = function () {
-                myAlertDialog.reOpen('商店的电脑好像坏掉了\n\n(其实是这部分的代码没写好...)');
+                // myAlertDialog.reOpen('商店的电脑好像坏掉了\n\n(其实是这部分的代码没写好...)');
+                Maps.shop.setVisible(false);
+                saleDialog.reOpen();
             }
         }else if (num == 2) {//黑板
             result.isStone = true;

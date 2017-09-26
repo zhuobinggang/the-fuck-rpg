@@ -1,17 +1,20 @@
 /**
  * Created by zhuo on 2017/9/11.
  */
-var roleDialog = new ListBox(5);
+var roleDialog = new ListBox(8);
 roleDialog.group = null;
 roleDialog.font = {font: "bold 22px Arial", fill: "#FFFFFF", boundsAlignH: "left", boundsAlignV: "middle"};
+roleDialog.font2 = {font: "bold 22px Arial", fill: "#FFFFFF", boundsAlignH: "center", boundsAlignV: "middle"};
 roleDialog.init = function () {
-    roleDialog.group = game.add.group();
+    // roleDialog.group = game.add.group();
     // roleDialog.list.push(Items.stick,Items.egg);
     //从用户背包初始化
-    roleDialog.list = player.equipmentList;
-    roleDialog.displayList = roleDialog.list.slice(roleDialog.thePointer, roleDialog.maxDisplayLength);
 }
 roleDialog.reOpen = function () {
+    if (!roleDialog.group) {
+        roleDialog.group = game.add.group();
+    }
+
     //重新更新显示位置
     roleDialog.thePointer = 0;
     roleDialog.displayListStart = 0;
@@ -65,20 +68,26 @@ roleDialog.render = function () {
         showUICorrect(text);
     })();
 
+
+    //右侧显示区
+    var text = game.add.text(0, 0, "装备中道具", this.font2);
+    text.setTextBounds(250, 0, 250, 100);
+    showUICorrect(text);
+
     (function updateEquipments() {
         var list = roleDialog.displayList;
         for (var i = list.length - 1; i >= 0; i--) {
             var text = game.add.text(0, 0, list[i].name, style);
-            text.setTextBounds(250, i * 100, 250, 100);
+            text.setTextBounds(250, 100+i * 50, 250, 50);
             showUICorrect(text);
         }
     })();
 
-    var barY = (roleDialog.thePointer - roleDialog.displayListStart) * 100;
-    var bar = game.add.graphics();
-    bar.beginFill(0xE0FFFF, 0.2);
-    bar.drawRect(250, barY, 250, 100);
-    showUICorrect(bar);
+    var barY = 100+(roleDialog.thePointer - roleDialog.displayListStart) * 50;
+    var bar = game.add.image(180,barY,'gun',null,roleDialog.group);
+    bar.height = 70;
+    bar.width = 70;
+    bar.fixedToCamera = true;
 }
 roleDialog.setVisible = function (visible) {
     roleDialog.group.visible = visible;
@@ -100,9 +109,9 @@ roleDialog.goUp = function () {
     roleDialog.render();
 }
 roleDialog.aDown = function () {
-    console.info('seleted item is:'+roleDialog.getSelectedItem().name);
+    console.info('seleted item is:' + roleDialog.getSelectedItem().name);
     var selected = roleDialog.getSelectedItem();
-    if (!selected)return;
+    if (!selected) return;
     equipShowDialog.reOpen(selected);
 }
 roleDialog.bDown = function () {
@@ -122,13 +131,14 @@ equipShowDialog.group = null;
 equipShowDialog.currentItem = null;
 
 equipShowDialog.init = function () {
-    equipShowDialog.group = game.add.group();
     // equipShowDialog.list.push(Items.stick,Items.egg);
     //从用户背包初始化
-    equipShowDialog.list = player.equipmentList;
-    equipShowDialog.displayList = equipShowDialog.list.slice(equipShowDialog.thePointer, equipShowDialog.maxDisplayLength);
 }
 equipShowDialog.reOpen = function (item) {
+    if (!this.group) {
+        equipShowDialog.group = game.add.group();
+    }
+
     equipShowDialog.currentItem = item || Items.excalibur;
 
     //重新更新显示位置
@@ -210,8 +220,8 @@ equipShowDialog.goUp = function () {
 equipShowDialog.aDown = function () {
     // console.info('seleted item is:'+equipShowDialog.getSelectedItem().name);
     var selected = equipShowDialog.getSelectedItem();
-    if (!selected)return;
-    selected.confirm(equipShowDialog.currentItem,player,player);
+    if (!selected) return;
+    selected.confirm(equipShowDialog.currentItem, player, player);
 
     //重新渲染role菜单
     currentCustomState = roleDialog;

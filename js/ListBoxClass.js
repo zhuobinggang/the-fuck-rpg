@@ -117,15 +117,17 @@ myAlertDialog.successFont = {
         boundsAlignH: "center",
         boundsAlignV: "middle"
     };
-myAlertDialog.init = function () {
-    myAlertDialog.group = game.add.group();
-    myAlertDialog.group.visible = false;
-}
+
 myAlertDialog.reOpen = function (msg, cb ,style, exitState) {
+    if(!myAlertDialog.group){
+        myAlertDialog.group = game.add.group();
+    }
+
     this.style = style || this.successFont;
     this.exitState = exitState || mainState;
 
     if(this.exitState.setVisible)this.exitState.setVisible(false);
+    mainState.setVisible(false);
 
     myAlertDialog.group.visible = true;
     currentCustomState = myAlertDialog;
@@ -133,6 +135,8 @@ myAlertDialog.reOpen = function (msg, cb ,style, exitState) {
     myAlertDialog.cb = cb || function () {
         myAlertDialog.bDown();
         };
+
+    this.setVisible(true);
     myAlertDialog.render();
 }
 myAlertDialog.render = function () {
@@ -162,4 +166,7 @@ myAlertDialog.bDown = function () {
     currentCustomState = this.exitState;
     this.exitState.setVisible(true);
 };
+myAlertDialog.setVisible = function (visible) {
+    this.group.visible = visible;
+}
 

@@ -133,7 +133,7 @@ Item.num = 0;
 var Items = {
     stick: new Item("木棍", "一根木棍", 0, 1, 0, 0, 0),
     egg: new Item('鸡蛋', '一个鸡蛋'),
-    excalibur: new Item("Excalibur", "一刀999,点击就送", 999, 999, 999, 999, 999, 999, 999, true),
+    excalibur: new Item("Excalibur", "一刀999,点击就送", 999, 999, 999, 999, 999, 999, 999, true,999),
     godHand: new Item("神之手", "物理攻击力挺高的", 0, 5, 0, 0, 0, 0, 0, false,22),
     faQ: new Item("FaQ!", "emmm这是什么?", 0, 0, 5, 0, 0, 0, 0, false,22),
     apple: new Item("苹果", "HP + 20", 0, 0, 0, 0, 0, -20, 0, true,2),

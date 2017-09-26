@@ -30,15 +30,15 @@ var mainState = {//the main dialog & the game
         cursor = game.input.keyboard.createCursorKeys();
 
         //init dialogs
-        itemDialog.init();
-        roleDialog.init();
-        menuDialog.init();
-        fightState.init();
-        fightItemDialog.init();
-        selectEnemyDialog.init();
-        myAlertDialog.init();
-        itemShowDialog.init();
-        equipShowDialog.init();
+        // itemDialog.init();
+        // roleDialog.init();
+        // menuDialog.init();
+        // fightState.init();
+        // fightItemDialog.init();
+        // selectEnemyDialog.init();
+        // myAlertDialog.init();
+        // itemShowDialog.init();
+        // equipShowDialog.init();
     },
     render: function () {
 
@@ -82,7 +82,6 @@ var mainState = {//the main dialog & the game
     },
     bDown: function () {
         player.bDown();
-        menuDialog.reOpen();
     },
     fixCameraTo: function (x, y) {
         // game.camera.focusOnXY(x, y);
@@ -97,13 +96,8 @@ var mainState = {//the main dialog & the game
         map.setVisible(visible);
     },
     gameReset: function () {
-        //从存档读取玩家信息
-        // playerReset();
-        // loadArchives();
-        // game.state.clearCurrentState();
-        game.state.restart(true);
-        //地图重置
-        // map.reset();
+        map.destroy();//清空地图group
+        game.state.restart(false);//保留group信息,不需要重新创建
     },
     update: function () {
         current_cold_down_time--;

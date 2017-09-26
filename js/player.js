@@ -65,14 +65,15 @@ function playerInteractiveInit() {
 
         return true;
     }
-    player.getItem = function (item, src) {
+    player.getItem = function (item, src, num) {
         src = src || {name: "你爸爸"}
+        num = num || 1;
         console.info('从 ' + src.name + ' 那获得道具 ' + item.name);
         // player.itemList.push(item);
         for (var i = player.itemList.length - 1; i >= 0; i--) {
             var itemObj = player.itemList[i];
             if (itemObj.item == item) {
-                itemObj.num = itemObj.num + 1;
+                itemObj.num = itemObj.num + num;
                 return;
             }
         }

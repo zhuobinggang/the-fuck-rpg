@@ -4,6 +4,7 @@
 var menuDialog = new ListBox(5);
 menuDialog.textGroup = null;
 menuDialog.font = {font: "bold 25px Arial", fill: "#9AFF9A", boundsAlignH: "center", boundsAlignV: "middle"};
+menuDialog.inited = false;
 menuDialog.init = function () {
     menuDialog.textGroup = game.add.group();
     menuDialog.textGroup.visible = false;
@@ -19,6 +20,8 @@ menuDialog.init = function () {
 
     //init display list
     menuDialog.displayList = menuDialog.list.slice(0, 5);
+
+    this.inited = true;
 };
 menuDialog.render = function () {
     var style = menuDialog.font;
@@ -35,14 +38,17 @@ menuDialog.render = function () {
     })();
 
     var barY = (menuDialog.thePointer - menuDialog.displayListStart) * 100;
-    var bar = game.add.graphics();
-    bar.beginFill(0xEE0000, 0.2);
-    bar.drawRect(0, barY, 500, 100);
+    var bar = game.add.image(50,barY+10,'gun',null,menuDialog.textGroup);
+    bar.height = 100;
+    bar.width = 100;
     bar.fixedToCamera = true;
-    menuDialog.textGroup.add(bar);
 };
 
 menuDialog.reOpen = function () {
+    if(!this.inited){
+        this.init();
+    }
+    mainState.setVisible(false);
     currentCustomState = this;
     menuDialog.setVisible(true);
     menuDialog.render();
