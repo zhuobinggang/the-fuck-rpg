@@ -43,6 +43,7 @@ var Monsters = {
     goblin: new Enemy('哥布林', 10, 3, 3, 3, 3, 2, 2,"普通的哥布林"),
     slime: new Enemy('史莱姆', 10, 3, 3, 3, 3, 2, 2,"普通的史莱姆"),
     bossOfOne: new Enemy('卡在墙里的死神', 99, 12, 12, 5, 5, 4, 100,"不是死神，是卡在墙里的死神"),
+    TheCain: new Enemy('该隐', 9999, 0, 0, 0, 0, 0, 100,'"就连惩罚，都不能接受我吗?"'),
 }
 //第一层
 Monsters.king.fuckPlayer = function () {
@@ -75,6 +76,25 @@ Monsters.bossOfOne.checkDeath = function () {
     Enemy.prototype.checkDeath.call(this);
     if (!this.isLiving) {
         var theBossTile = Maps.plain1.obj_tile_map[20][21];
+        theBossTile.isStone = false;
+        theBossTile.beInterestedCallback = function () {
+            myAlertDialog.reOpen('现在你可以通过这里',function () {
+                myAlertDialog.bDown();
+            });
+        };
+        Maps.mapInfo.plain1.bossKilledFlag = true;
+    }
+}
+Monsters.TheCain.fuckPlayer = function () {
+    fightState.addLog('审判者对伤害来源施加了审判');
+    var damageSuffered = this.maxHealth - this.health;
+    console.log('收到伤害: '+damageSuffered* 7);
+    player.damageFrom(0,0,damageSuffered * 7);
+}
+Monsters.TheCain.checkDeath = function () {
+    Enemy.prototype.checkDeath.call(this);
+    if (!this.isLiving) {
+        var theBossTile = Maps.floor3.obj_tile_map[20][22];
         theBossTile.isStone = false;
         theBossTile.beInterestedCallback = function () {
             myAlertDialog.reOpen('现在你可以通过这里',function () {

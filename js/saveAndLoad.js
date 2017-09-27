@@ -9,8 +9,15 @@ var MyAchiveManager = {
         if (!mapInfo) {
             Maps['plain1'].init();
         } else {
-            console.log(mapInfo);
             mapInfo = JSON.parse(mapInfo)
+
+            //同步存档数据
+            if(!mapInfo.floor3){//没有同步第三层
+                mapInfo.floor3 = {
+                    item0BeTook: false,//该隐的诅咒是否被拿走
+                    bossKilledFlag: false,
+                }
+            }
 
             Maps.mapInfo = mapInfo;
             Maps[mapInfo.currentFloor].init();

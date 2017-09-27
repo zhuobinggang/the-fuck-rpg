@@ -95,7 +95,8 @@ Skill.num = 0;
 var Skills = {
     normalPysicAttack: new Skill(),
     normalMagicAttack: new Skill('普通魔法攻击', '很普通的魔法攻击', 2, 0.0, 0.0, 1),
-    frameDeathChop: new Skill('烈焰死亡镰刃', '很普通的烈焰死亡镰刃攻击', 3, 0.0, 0.0, 5)
+    frameDeathChop: new Skill('烈焰死亡镰刃', '很普通的烈焰死亡镰刃攻击', 3, 0.0, 0.0, 5),
+    die: new Skill('死亡', '死亡', 3, 0.0, 0.0, 999999),
 }
 
 
@@ -140,6 +141,7 @@ var Items = {
     OSUPlayer: new Item("OSU玩家的头", "只是普通的OSU玩家的头而已", 20, 5, 5, 5, 5, 0, 0, false),
     deathKiller: new Item("死神杀戮者", "残忍杀害死神的证明\n装备后增加额外技能", 0, 9, 5, 0, 0, 0, 0, false),
     coin: new Item("金币", "交易用的金币\n可以卖出好价格"),
+    curseOfAbe: new Item("亚伯的诅咒", "曾为世界所爱之人的诅咒",999,0,0,0,0,0,0,true,999),
 }
 Items.egg.canUseInFight = true;
 Items.apple.effective = function (target, src) {
@@ -151,6 +153,7 @@ Items.apple.effective = function (target, src) {
 Items.coin.price = 10;
 //武器技能
 Items.deathKiller.skills = [Skills.frameDeathChop];
+Items.curseOfAbe.skills = [Skills.die];
 
 
 /** common functions **/

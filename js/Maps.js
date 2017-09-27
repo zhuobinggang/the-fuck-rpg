@@ -26,12 +26,17 @@ Map.prototype.initObjsTileMap = function (numMap, height, width, cb) {
 }
 
 var Maps = {
-    plain1: new Map('plain1', stonesMap.plain1, {x: 2, y: 0}),
-    shop: new Map('shop', stonesMap.shop, {x: 2, y: 2}),
+    plain1: new Map('安塔林斯平原', stonesMap.plain1, {x: 2, y: 0}),
+    shop: new Map('商店', stonesMap.shop, {x: 2, y: 2}),
+    floor3: new Map('命运坟场', stonesMap.floor3, {x: 2, y: 0}),
     mapInfo: {
         currentFloor: null,
         plain1: {
             item1BeUsed: false,//OSU是否被拿走
+            bossKilledFlag: false,
+        },
+        floor3: {
+            item0BeTook: false,//该隐的诅咒是否被拿走
             bossKilledFlag: false,
         }
     }//储存的地图信息
@@ -126,8 +131,10 @@ Maps.plain1.initObjsTileMap = function (stoneMap) {
         } else if (num == 10) {//石碑1
             result.isStone = true;
             //读取石碑内容
+            //TODO: 写上新内容
             result.beInterestedCallback = function () {
-                var message = 'Sword Eat Online 第一层\n\n' + '主要掉落物: \n' +
+                var message = '欢迎来到\nSword Art Offline\n目前艾恩格朗特一共有3层:'+Maps.plain1.name+
+                    '\n主要掉落物: \n' +
                     '苹果,木剑,神之手,FaQ\n' + 'Tips:深草区是刷怪地点\n' + '打倒Boss进入第二层!';
                 myAlertDialog.reOpen(message, function () {
                     myAlertDialog.bDown();
@@ -415,7 +422,10 @@ Maps.shop.initObjsTileMap = function () {
         }else if (num == 14) {//楼梯
             result.isStone = true;
             result.beInterestedCallback = function () {
-                myAlertDialog.reOpen('第三层施工中...');
+                myAlertDialog.reOpen('进入第三层?',function () {
+                    Maps.changeMap('floor3');
+                    myAlertDialog.bDown();
+                });
             }
         } else if (num == 13) {//楼梯
             result.isStone = true;

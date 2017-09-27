@@ -275,6 +275,7 @@ fightState.playerTurnOver = function () {
 
 
     if (player.health < 1) {
+        console.log('你死了,health:'+player.health);
         this.close();
         mainState.gameReset();
         // myAlertDialog.reOpen('你死了', function () {
