@@ -131,9 +131,8 @@ Maps.plain1.initObjsTileMap = function (stoneMap) {
         } else if (num == 10) {//石碑1
             result.isStone = true;
             //读取石碑内容
-            //TODO: 写上新内容
             result.beInterestedCallback = function () {
-                var message = '欢迎来到\nSword Art Offline\n目前艾恩格朗特一共有3层:'+Maps.plain1.name+
+                var message = '欢迎来到\nSword Art Offline\n目前艾恩格朗特一共有3层\n\n'+Maps.plain1.name+
                     '\n主要掉落物: \n' +
                     '苹果,木剑,神之手,FaQ\n' + 'Tips:深草区是刷怪地点\n' + '打倒Boss进入第二层!';
                 myAlertDialog.reOpen(message, function () {
@@ -149,9 +148,7 @@ Maps.plain1.initObjsTileMap = function (stoneMap) {
                     player.getItem(Items.OSUPlayer);
                     //清除这个效果
                     result.beInterestedCallback = function () {
-                        myAlertDialog.reOpen('还想拿?QQ问爸爸要', function () {
-                            myAlertDialog.bDown();
-                        }, null, mainState);
+                        myAlertDialog.reOpen('OSU玩家的头已经长不出来了');
                     }
                     //设置储存flag
                     Maps.mapInfo.plain1.item1BeUsed = true;
@@ -181,6 +178,8 @@ Maps.plain1.initObjsTileMap = function (stoneMap) {
                     myAlertDialog.bDown();
                 }, null, mainState);
             }
+        } else if (num == 3) {//沙地
+            //可以不遇到怪
         }
         return result;
     })
@@ -322,7 +321,7 @@ Maps.plain1.resetByArchive = function (mapInfo) {
 
     if (osuUsedFlag) {
         this.obj_tile_map[11][23].beInterestedCallback = function () {
-            myAlertDialog.reOpen('还想拿?QQ问爸爸要', function () {
+            myAlertDialog.reOpen('OSU玩家的头已经长不出来了', function () {
                 myAlertDialog.bDown();
             }, null, mainState);
         };
@@ -331,6 +330,8 @@ Maps.plain1.resetByArchive = function (mapInfo) {
         var bossTile = this.obj_tile_map[20][21];
         bossTile.isStone = false;
         bossTile.beInterestedCallback = null;
+        Maps.plain1.map.putTile(null,20,21,Maps.plain1.layer_objs);
+        Maps.plain1.map.putTile(null,20,20,Maps.plain1.layer_objs);
     }
 }
 Maps.plain1.destroy = function () {

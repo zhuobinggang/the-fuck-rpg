@@ -50,7 +50,22 @@ Maps.floor3.initPlayerTile = function () {
 }
 Maps.floor3.resetByArchive = function () {
     console.log('我想要通过存档改变一些特性');
-    //TODO: 做到这里
+    if (Maps.mapInfo.floor3.item0BeTook) {
+        Maps.floor3.obj_tile_map[24][1].beInterestedCallback = function () {
+            myAlertDialog.reOpen('"呵，人类"');
+        };
+    }
+    if (Maps.mapInfo.floor3.bossKilledFlag) {
+        Maps.floor3.obj_tile_map[20][22].beInterestedCallback = function () {
+            myAlertDialog.reOpen('现在你可以通过这里', function () {
+                myAlertDialog.bDown();
+            });
+        };
+        //改变地图显示
+        Maps.floor3.map.putTile(null, 20, 20, Maps.floor3.objLayer);
+        Maps.floor3.map.putTile(null, 20, 21, Maps.floor3.objLayer);
+        Maps.floor3.map.putTile(null, 20, 22, Maps.floor3.objLayer);
+    }
 }
 Maps.floor3.initObjsTileMap = function () {
     console.log('我想要初始化砖块地图');
@@ -59,19 +74,19 @@ Maps.floor3.initObjsTileMap = function () {
         if (num == 6) {//河里的石碑
             result.isStone = true;
             result.beInterestedCallback = function () {
-                var msg = '"如果那时候我能和你多聊聊\n...\n或许可以成为朋友吧"';
+                var msg = '...';
                 myAlertDialog.reOpen(msg);
             }
         } else if (num == 7) {//浅草地里的石碑
             result.isStone = true;
             result.beInterestedCallback = function () {
-                var msg = '"噢，我承认\n一时冲动杀死你的我也有错...\n\n我们都有错不对么?"'
+                var msg = '...'
                 myAlertDialog.reOpen(msg);
             }
         } else if (num == 8) {//出口附近的石碑
             result.isStone = true;
             result.beInterestedCallback = function () {
-                var msg = '---命运坟场---\n\n"一切都是你的错\n因为你制造了不公!"';
+                var msg = '---命运坟场---';
                 myAlertDialog.reOpen(msg, function () {
                     myAlertDialog.bDown();
                 }, null, mainState);
@@ -79,10 +94,10 @@ Maps.floor3.initObjsTileMap = function () {
         } else if (num == 9) {//boss点
             result.isStone = true;
             result.beInterestedCallback = function () {
-                myAlertDialog.reOpen('"这就是给予我这个罪人的制裁吗?"',function () {
+                myAlertDialog.reOpen('"这就是给予我这个罪人的制裁吗?"', function () {
                     myAlertDialog.bDown();
                     fightState.reOpen([Object.create(Monsters.TheCain)]);
-                },null,mainState);
+                }, null, mainState);
             }
         } else if (num == 3) {//石头墙壁
             result.isStone = true;
@@ -119,10 +134,80 @@ Maps.floor3.initObjsTileMap = function () {
                     }, null, mainState);
                 }, null, mainState);
             }
+        } else if (num == 4) {//深草地
+            result = Maps.floor3.getDeepGlassTileObj(result);
+        } else if(num == 2){
+
         }
         return result;
     })
     this.obj_tile_map = obj_tile_map;
+}
+Maps.floor3.getDeepGlassTileObj = function (result) {
+    var getRandomMonster = function () {
+        var seed = Math.floor(Math.random() * 2);
+        if (seed == 0) {
+            var result = Object.create(Monsters.poet);
+            //算装备掉落率
+            result.items = [Items.coin];
+            // return slime;
+            return result;
+        } else if (seed == 1) {
+            var result = Object.create(Monsters.priest);
+            //算装备掉落率
+            result.items = [Items.coin];
+            // return slime;
+            return result;
+        }
+    }
+
+    result.encounterChance = 30;
+    result.spawnEnemies = function () {
+        var seed = Math.floor(Math.random() * 2);
+        var results = [];
+        if (seed == 0) {
+            results.push(getRandomMonster());
+        } else if (seed == 1) {
+            results.push(getRandomMonster());
+            results.push(getRandomMonster());
+        }
+        return results;
+    }
+
+    return result;
+}
+Maps.floor3.getOceanTile = function (result) {
+    var getRandomMonster = function () {
+        var seed = Math.floor(Math.random() * 2);
+        if (seed == 0) {
+            var result = Object.create(Monsters.swimmer);
+            //算装备掉落率
+            result.items = [Items.coin];
+            // return slime;
+            return result;
+        } else if (seed == 1) {
+            var result = Object.create(Monsters.peopleFishing);
+            //算装备掉落率
+            result.items = [Items.coin];
+            // return slime;
+            return result;
+        }
+    }
+
+    result.encounterChance = 20;
+    result.spawnEnemies = function () {
+        var seed = Math.floor(Math.random() * 2);
+        var results = [];
+        if (seed == 0) {
+            results.push(getRandomMonster());
+        } else if (seed == 1) {
+            results.push(getRandomMonster());
+            results.push(getRandomMonster());
+        }
+        return results;
+    }
+
+    return result;
 }
 Maps.floor3.playerGoTo = function (offsetX, offsetY) {
     return Maps.plain1.playerGoTo.call(this, offsetX, offsetY)
@@ -132,7 +217,7 @@ Maps.floor3.reOpen = function () {
     this.setVisible(true);
 }
 Maps.floor3.encounter = function (x, y) {
-    //TODO: encounter
+    Maps.plain1.encounter.call(this, x, y);
 }
 Maps.floor3.playerInterestOn = function (x, y) {
     Maps.plain1.playerInterestOn.call(this, x, y);

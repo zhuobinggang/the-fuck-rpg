@@ -132,6 +132,7 @@ class Item extends Entity {
 }
 Item.num = 0;
 var Items = {
+    //Warn: 加入道具需要在最后，因为是按顺序存储的
     stick: new Item("木棍", "一根木棍", 0, 1, 0, 0, 0),
     egg: new Item('鸡蛋', '一个鸡蛋'),
     excalibur: new Item("Excalibur", "一刀999,点击就送", 999, 999, 999, 999, 999, 999, 999, true,999),
@@ -142,6 +143,13 @@ var Items = {
     deathKiller: new Item("死神杀戮者", "残忍杀害死神的证明\n装备后增加额外技能", 0, 9, 5, 0, 0, 0, 0, false),
     coin: new Item("金币", "交易用的金币\n可以卖出好价格"),
     curseOfAbe: new Item("亚伯的诅咒", "曾为世界所爱之人的诅咒",999,0,0,0,0,0,0,true,999),
+    woodSword: new Item("木剑", "攻击力+2", 0, 2, 0, 0, 0,0,0,false,30),
+    ironSword: new Item("铁剑", "攻击力+4", 0, 4, 0, 0, 0,0,0,false,70),
+    steelSword: new Item("钢剑", "攻击力+6", 0, 6, 0, 0, 0,0,0,false,120),
+    jewelSword: new Item("宝石剑", "攻击力+9", 0, 6, 0, 0, 0,0,0,false,200),
+    woodArmour: new Item("轻甲", "物理防御+2\n魔法防御+1", 0, 0, 2, 1, 0,0,0,false,30),
+    ironArmour: new Item("铁甲", "物理防御+4\n魔法防御+3", 0, 0, 4, 3, 0,0,0,false,70),
+    jewelArmour: new Item("宝石甲", "物理防御+7\n魔法防御+5", 0, 0, 7, 5, 0,0,0,false,200),
 }
 Items.egg.canUseInFight = true;
 Items.apple.effective = function (target, src) {
@@ -150,7 +158,7 @@ Items.apple.effective = function (target, src) {
     target.damageFrom(this.pysicDamage, this.magicDamage);
 }
 
-Items.coin.price = 10;
+Items.coin.price = 20;
 //武器技能
 Items.deathKiller.skills = [Skills.frameDeathChop];
 Items.curseOfAbe.skills = [Skills.die];

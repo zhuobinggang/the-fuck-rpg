@@ -308,7 +308,9 @@ saleDialog.reOpen = function (itemList, lastState) {
     }
 
     //复用道具菜单
-    saleDialog.list = itemList || [{item: Items.apple, num: 9999},{item: Items.excalibur, num: 9999}];
+    saleDialog.list = itemList || [{item: Items.apple, num: 9999},{item: Items.excalibur, num: 9999}
+    ,{item: Items.ironSword, num: 9999},{item: Items.ironArmour, num: 9999},{item: Items.steelSword, num: 9999}
+    ,{item: Items.jewelSword, num: 9999},{item: Items.jewelArmour, num: 9999}];
     saleDialog.lastState = lastState || mainState;
     saleDialog.reset();
 
@@ -330,7 +332,7 @@ saleDialog.render = function () {
         var list = saleDialog.displayList;
         for (var i = list.length - 1; i >= 0; i--) {
             // var text = game.add.text(0, 0, list[i].item.name + '\t X' + list[i].num, style);
-            var text = game.add.text(0, 0, list[i].item.name + '\t X无限', style);
+            var text = game.add.text(0, 0, list[i].item.name + '\t $'+list[i].item.price*7, style);
             text.setTextBounds(0, i * 55 + 35, 500, 55);
             text.fixedToCamera = true;
             saleDialog.group.add(text);
@@ -373,7 +375,7 @@ saleDialog.aDown = function () {
         var haveNum = selected.num;
         if (num > haveNum) num = haveNum;
 
-        var moneyGet = selected.item.price * num * 10;
+        var moneyGet = selected.item.price * num * 7;
 
         //check money not enough
         if (moneyGet > player.money) {
